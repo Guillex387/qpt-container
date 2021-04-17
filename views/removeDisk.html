@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete disk</title>
+    <style>
+        body {
+            background-color: #363636;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        select,
+        input,
+        button {
+            color: white;
+            background-color: #242424;
+            border: none;
+            font-size: larger;
+            margin: 20px;
+            padding: 10px 20px;
+            width: auto;
+            outline: none;
+        }
+
+        input {
+            border: 2px solid transparent;
+        }
+
+        button:hover {
+            background-color: #303030;
+        }
+
+        button:active {
+            background-color: #2b2b2b;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <select id="selected-disk"></select>
+        <input type="password" id="password" placeholder="Password">
+        <button id="btn1">Delete</button>
+    </main>
+</body>
+<script>
+    let { ipcRenderer } = require("electron");
+    let disks = document.getElementById("selected-disk");
+    let password = document.getElementById("password");
+    let btn = document.getElementById("btn1");
+    ipcRenderer.on("send-info", (ev, diskList) => {
+        diskList.forEach((diskName) => {
+            disks.innerHTML += `<option value="${diskName}">${diskName}</option>`;
+        });
+    });
+    btn.addEventListener('click', () => {
+        ipcRenderer.sendSync('remove-disk', disks.value, password.value);
+    });
+</script>
+
+</html>

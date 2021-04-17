@@ -1,0 +1,9 @@
+node_modules
+views/js
+disks
+package-loc.json
+.vscode
+disks.json
+Actualizacion.txt
+app
+qpt-container-win32-x64

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QPT container</title>
+    <link rel="stylesheet" href="./css/main.css">
+</head>
+
+<body>
+    <header>
+        <section>
+            <h1 class="no-wrap">Disk menu</h1>
+        </section>
+        <section>
+            <h1 class="no-wrap" style="display: inline-block;">File previewer</h1>
+        </section>
+    </header>
+    <main>
+        <ul class="disk-content"></ul>
+        <section class="file-preview"></section>
+    </main>
+</body>
+<script>
+    let {activeList, clearPreview} = require('./js/components');
+    let {preview, rmFile, rmFolder, newFiles, folderMaker, exportFile} = require('./js/controller');
+</script>
+
+</html>

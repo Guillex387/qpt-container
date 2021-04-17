@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add disk</title>
+    <style>
+        body{
+            background-color: #363636;
+        }
+        main{
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        select, input, button{
+            color: white;
+            background-color: #242424;
+            border: none;
+            font-size: larger;
+            margin: 20px;
+            padding: 10px 20px;
+            width: auto;
+            outline: none;
+        }
+        input{
+            border: 2px solid transparent;
+        }
+        .input-error{
+            border-color: red;
+            color: red;
+        }
+        button:hover{
+            background-color: #303030;
+        }
+        button:active{
+            background-color: #2b2b2b;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <input type="text" id="name" placeholder="Put here the name">
+        <input type="password" id="password" placeholder="Password">
+        <button id="btn1">Create</button>
+    </main>
+</body>
+<script>
+    let { ipcRenderer } = require('electron');
+    let name = document.getElementById('name');
+    let password = document.getElementById('password');
+    let btn = document.getElementById('btn1');
+    let alreadyCreated = [];
+    ipcRenderer.on("send-info", (ev, diskList) => {
+        diskList.forEach(diskName => {
+            alreadyCreated.push(diskName);
+        });
+    });
+    function exists(name){
+        let out = false;
+        alreadyCreated.forEach(e => {
+            if(e === name){
+                out = true;
+                return;
+            }
+        });
+        return out;
+    }
+    btn.addEventListener('click', () => {
+        if(exists(name.value)){
+            name.className = 'input-error';
+        }else{
+            ipcRenderer.sendSync('create-disk', name.value, password.value);
+        }
+    });
+    name.addEventListener('focus', () => {
+        name.className = '';
+    });
+</script>
+</html>

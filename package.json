@@ -1,0 +1,23 @@
+{
+    "name": "QPT-container",
+    "version": "0.9.0",
+    "description": "This is a program for encrypt files into 'containers' and protect your data",
+    "main": "./app/index.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-packager . qpt-container --asar --overwrite --platform=win32 --arch=x64 --ignore=disks --ignore=disks.json --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=Actualizacion.txt --ignore=.git --ignore=.vscode --ignore=.js.map"
+    },
+    "keywords": [],
+    "author": "QPT",
+    "license": "ISC",
+    "dependencies": {
+        "mime-types": "^2.1.28"
+    },
+    "devDependencies": {
+        "@types/electron": "^1.6.10",
+        "@types/mime-types": "^2.1.0",
+        "@types/node": "^14.14.20",
+        "electron": "^12.0.2",
+        "electron-packager": "^15.2.0"
+    }
+}
