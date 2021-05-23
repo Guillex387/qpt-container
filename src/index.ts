@@ -5,7 +5,8 @@ import Disks from './disk';
 import mainEventHandler from './mainEvents';
 import { handleError, handleErrorAsync } from './errors';
 import { production } from './config';
-import fs from 'fs'
+import fs from 'fs';
+import handleWork from './work';
 const mainHtml = path.join(__dirname, '..', 'views', 'index.html');
 let mainWindow: BrowserWindow;
 const devMenu: Menu = Menu.buildFromTemplate([
@@ -189,26 +190,14 @@ function deployMainWindow(): void {
         app.quit();
     });
 }
-let working = false;
 function sleep(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
-}
-async function handleWork(func: () => any) {
-    if (!working) {
-        working = true;
-        await func();
-        working = false;
-        return;
-    }
-    await sleep(60);
-    await handleWork(func);
-    return;
 }
 mainEventHandler.on('disks-ready', () => {
     app.on('ready', deployMainWindow);
 });
 ipcMain.on('new-file', async (ev, originPath) => {
-    await handleWork(async () => {
+    handleWork(async () => {
         let files = await Dialogs.openFileDialog();
         let succesfulyCreated: string[] = [];
         for (let i = 0; i < files.length; i++) {
@@ -223,7 +212,7 @@ ipcMain.on('new-file', async (ev, originPath) => {
     });
 });
 ipcMain.on('new-folder', async (ev, originPath, name) => {
-    await handleWork(() => {
+    handleWork(() => {
         handleError(() => {
             Disks.addFolder(originPath, name);
             ev.returnValue = true;
@@ -233,8 +222,8 @@ ipcMain.on('new-folder', async (ev, originPath, name) => {
         });
     });
 });
-ipcMain.on('get-file', async (ev, filePath) => {
-    await handleWork(async () => {
+ipcMain.on('get-file', (ev, filePath) => {
+    handleWork(async () => {
         await handleErrorAsync(async () => {
             const { data, mimeType } = await Disks.getFileContent(filePath);
             ev.returnValue = [data.toString('base64'), mimeType];
@@ -244,8 +233,8 @@ ipcMain.on('get-file', async (ev, filePath) => {
         });
     });
 });
-ipcMain.on('remove-file', async (ev, filePath) => {
-    await handleWork(async () => {
+ipcMain.on('remove-file', (ev, filePath) => {
+    handleWork(async () => {
         await handleErrorAsync(async () => {
             await Disks.rmFile(filePath);
             ev.returnValue = true;
@@ -255,8 +244,8 @@ ipcMain.on('remove-file', async (ev, filePath) => {
         });
     });
 });
-ipcMain.on('remove-folder', async (ev, folderPath) => {
-    await handleWork(async () => {
+ipcMain.on('remove-folder', (ev, folderPath) => {
+    handleWork(async () => {
         await handleErrorAsync(async () => {
             await Disks.rmFolder(folderPath);
             ev.returnValue = true;
@@ -270,8 +259,8 @@ ipcMain.on('message-box-confirm', async (ev, msg) => {
     let accepted = await Dialogs.openQuestionDialog(msg);
     ev.returnValue = accepted;
 });
-ipcMain.on('export-file', async (ev, file: string) => {
-    await handleWork(async () => {
+ipcMain.on('export-file', (ev, file: string) => {
+    handleWork(async () => {
         let segments = file.split('/');
         let fileName = segments[segments.length - 1];
         let selectedPath = await Dialogs.openExportDialog(fileName);
