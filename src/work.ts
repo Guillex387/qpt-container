@@ -10,8 +10,9 @@ export default function handleWork(func: () => any): void {
 controller.on('run-work', () => {
     let fn = workQueue.shift();
     if(fn !== undefined) {
-        fn()?.then(() => {
+        fn().then(() => controller.emit('run-work')) || (() => {
+            fn();
             controller.emit('run-work');
-        });
+        })();
     }
 });
