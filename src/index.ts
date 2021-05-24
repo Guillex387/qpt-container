@@ -27,8 +27,8 @@ const devMenu: Menu = Menu.buildFromTemplate([
                 label: 'Load disk',
                 accelerator: 'Ctrl+L',
                 click: () => {
-                    Dialogs.openLoadDiskDialog().then(val => {
-                        if(val){
+                    Dialogs.openLoadDiskDialog(mainWindow).then(val => {
+                        if (val) {
                             const { name, pass } = val;
                             handleError(() => {
                                 Disks.load(name, pass);
@@ -48,8 +48,8 @@ const devMenu: Menu = Menu.buildFromTemplate([
                 label: 'Add disk',
                 accelerator: 'Ctrl+A',
                 click: () => {
-                    Dialogs.openAddDiskDialog().then(val => {
-                        if(val){
+                    Dialogs.openAddDiskDialog(mainWindow).then(val => {
+                        if (val) {
                             const { name, pass } = val;
                             handleError(() => {
                                 Disks.createDisk(name, pass);
@@ -66,8 +66,8 @@ const devMenu: Menu = Menu.buildFromTemplate([
                 label: 'Remove disk',
                 accelerator: 'Ctrl+R',
                 click: () => {
-                    Dialogs.openRemoveDiskDialog().then(val => {
-                        if(val){
+                    Dialogs.openRemoveDiskDialog(mainWindow).then(val => {
+                        if (val) {
                             const { selected, pass } = val;
                             handleError(() => {
                                 Disks.rmDisk(selected, pass);
@@ -106,8 +106,8 @@ const distMenu: Menu = Menu.buildFromTemplate([
                 label: 'Load disk',
                 accelerator: 'Ctrl+L',
                 click: () => {
-                    Dialogs.openLoadDiskDialog().then(val => {
-                        if(val){
+                    Dialogs.openLoadDiskDialog(mainWindow).then(val => {
+                        if (val) {
                             const { name, pass } = val;
                             handleError(() => {
                                 Disks.load(name, pass);
@@ -127,8 +127,8 @@ const distMenu: Menu = Menu.buildFromTemplate([
                 label: 'Add disk',
                 accelerator: 'Ctrl+A',
                 click: () => {
-                    Dialogs.openAddDiskDialog().then(val => {
-                        if(val){
+                    Dialogs.openAddDiskDialog(mainWindow).then(val => {
+                        if (val) {
                             const { name, pass } = val;
                             handleError(() => {
                                 Disks.createDisk(name, pass);
@@ -145,8 +145,8 @@ const distMenu: Menu = Menu.buildFromTemplate([
                 label: 'Remove disk',
                 accelerator: 'Ctrl+R',
                 click: () => {
-                    Dialogs.openRemoveDiskDialog().then(val => {
-                        if(val){
+                    Dialogs.openRemoveDiskDialog(mainWindow).then(val => {
+                        if (val) {
                             const { selected, pass } = val;
                             handleError(() => {
                                 Disks.rmDisk(selected, pass);
@@ -195,9 +195,6 @@ function deployMainWindow(): void {
         Disks.save();
         app.quit();
     });
-}
-function sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
 }
 mainEventHandler.on('disks-ready', () => {
     app.on('ready', deployMainWindow);

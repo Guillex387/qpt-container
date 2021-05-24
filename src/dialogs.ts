@@ -62,12 +62,20 @@ class Dialogs {
             title: `${rolError} error`
         });
     }
-    public static async openLoadDiskDialog(): Promise<{name: string, pass: string} | null> {
+    public static async openLoadDiskDialog(parent?: BrowserWindow): Promise<{name: string, pass: string} | null> {
         return new Promise((resolve, reject) => {
             let finish = false;
+            let modal: boolean = parent ? true : false;
             let loaderWindow = new BrowserWindow({
                 show: false,
                 darkTheme: true,
+                minimizable: false,
+                maximizable: false,
+                width: 600,
+                height: 300,
+                alwaysOnTop: true,
+                parent,
+                modal,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false
@@ -91,12 +99,21 @@ class Dialogs {
             });
         });
     }
-    public static async openAddDiskDialog(): Promise<{name: string, pass: string} | null> {
+    public static async openAddDiskDialog(parent?: BrowserWindow): Promise<{name: string, pass: string} | null> {
         return new Promise((resolve, reject) => {
             let finish = false;
+            let modal: boolean = parent ? true : false;
             let addDiskWindow = new BrowserWindow({
                 show: false,
                 darkTheme: true,
+                resizable: false,
+                minimizable: false,
+                maximizable: false,
+                width: 850,
+                height: 300,
+                alwaysOnTop: true,
+                parent,
+                modal,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false
@@ -120,12 +137,20 @@ class Dialogs {
             });
         });
     }
-    public static async openRemoveDiskDialog(): Promise<{selected: string, pass: string} | null> {
+    public static async openRemoveDiskDialog(parent?: BrowserWindow): Promise<{selected: string, pass: string} | null> {
         return new Promise((resolve, reject) => {
             let finish: boolean = false;
+            let modal: boolean = parent ? true : false;
             let removeDiskWindow = new BrowserWindow({
                 show: false,
                 darkTheme: true,
+                minimizable: false,
+                maximizable: false,
+                width: 600,
+                height: 300,
+                alwaysOnTop: true,
+                parent,
+                modal,
                 webPreferences: {
                     nodeIntegration: true,
                     contextIsolation: false
