@@ -7,12 +7,11 @@ export default function handleWork(func: () => any): void {
         controller.emit('run-work');
     }
 }
-controller.on('run-work', () => {
+controller.on('run-work', async () => {
     let fn = workQueue.shift();
     if(fn !== undefined) {
-        fn().then(() => controller.emit('run-work')) || (() => {
-            fn();
-            controller.emit('run-work');
-        })();
+        await fn();
+        controller.emit('run-work');
     }
+    return;
 });
