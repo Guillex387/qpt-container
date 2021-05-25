@@ -5,7 +5,7 @@
     "main": "./app/index.js",
     "scripts": {
         "start": "electron .",
-        "build": "electron-packager . qpt-container --asar --overwrite --platform=win32 --arch=x64 --ignore=disks --ignore=disks.json --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=Actualizacion.txt --ignore=.git --ignore=.vscode --ignore=.js.map"
+        "build": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=win32 --arch=x64 --ignore=disks --ignore=disks.json --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=Actualizacion.txt --ignore=.git --ignore=.vscode --ignore=.js.map"
     },
     "keywords": [],
     "author": "QPT",

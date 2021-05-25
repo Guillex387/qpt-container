@@ -1,9 +1,7 @@
 node_modules
 views/js
-disks
-package-loc.json
 .vscode
-disks.json
-Actualizacion.txt
+Updates.txt
 app
-qpt-container-win32-x64
+data
+build

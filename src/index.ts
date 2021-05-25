@@ -197,8 +197,9 @@ function deployMainWindow(): void {
         app.quit();
     });
 }
-app.on('ready', () => {
-    Disks.init().then(deployMainWindow);
+app.whenReady().then(async () => {
+    await Disks.init();
+    deployMainWindow();
 });
 ipcMain.on('new-file', async (ev, originPath) => {
     handleWork(async () => {

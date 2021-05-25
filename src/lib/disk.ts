@@ -4,7 +4,7 @@ import Container from "./container";
 import Encryptor from "./crypter";
 import errors from "../errors";
 import Compressor from "./compress";
-import { controllerPath, disksFolder } from '../config';
+import { controllerPath, disksFolder, dataFolder } from '../config';
 interface FileI {
     type: "file";
     name: string;
@@ -26,11 +26,15 @@ export default class Disks {
     private static loaded: Disk[] = [];
     private static availables: string[] = [];
     public static async init(): Promise<void> {
-        if (!fs.existsSync(controllerPath)) {
-            Disks.createDiskControllerFile();
-        }
-        if (!fs.existsSync(disksFolder)) {
-            fs.mkdirSync(disksFolder);
+        if(!fs.existsSync(dataFolder)){
+            fs.mkdirSync(dataFolder);
+            if (!fs.existsSync(controllerPath)) {
+                Disks.createDiskControllerFile();
+                if (!fs.existsSync(disksFolder)) {
+                    fs.mkdirSync(disksFolder);
+                }
+            }
+            return;
         }
         Disks.availables = JSON.parse(fs.readFileSync(controllerPath, { encoding: 'utf-8' }));
         return;
