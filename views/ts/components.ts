@@ -112,12 +112,12 @@ export const loadPreviewer = (fileName: string, blobUrl: string, mimeType: strin
         let component = '';
         let initType = mimeType.split('/')[0];
         if (initType === 'image') {
-            component = `<img style="max-height: 80%;max-width: 80%" src="${blobUrl}">`;
+            component = `<img style="max-height: 98%;max-width: 98%" src="${blobUrl}">`;
         } else if (mimeType === 'application/pdf') {
             component = `<embed width="100%" height="100%" src="${blobUrl}#toolbar=0">`;
         } else if (initType === 'video') {
             component = `
-            <video controls controlslist="nodownload" style="max-height: 70%;max-width: 70%;outline: none;">
+            <video controls controlslist="nodownload" style="max-height: 98%;max-width: 98%;outline: none;">
                 <source src="${blobUrl}" type="${mimeType}">
             </video>
             `;

@@ -32,6 +32,7 @@ select {
 main {
     display: grid;
     grid-template-columns: 2fr 5fr;
+    overflow: hidden;
 }
 
 header {
@@ -134,6 +135,7 @@ ul {
     display: grid;
     grid-template-rows: 50px auto;
     border-bottom: solid gray 1px;
+    overflow: hidden;
 }
 
 .file-preview header {
@@ -163,6 +165,7 @@ ul {
     justify-content: center;
     align-items: center;
     background-color: #2e2e2e;
+    overflow: hidden;
 }
 .folder-menu {
     margin-left: auto;

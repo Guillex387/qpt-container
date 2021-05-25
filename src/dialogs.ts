@@ -73,7 +73,6 @@ class Dialogs {
                 maximizable: false,
                 width: 600,
                 height: 300,
-                alwaysOnTop: true,
                 parent,
                 modal,
                 webPreferences: {
@@ -111,7 +110,6 @@ class Dialogs {
                 maximizable: false,
                 width: 850,
                 height: 300,
-                alwaysOnTop: true,
                 parent,
                 modal,
                 webPreferences: {
@@ -148,7 +146,6 @@ class Dialogs {
                 maximizable: false,
                 width: 600,
                 height: 300,
-                alwaysOnTop: true,
                 parent,
                 modal,
                 webPreferences: {
