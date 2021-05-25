@@ -1,5 +1,5 @@
 import { dialog, BrowserWindow, ipcMain } from 'electron';
-import Disks from './disk';
+import Disks from './lib/disk';
 import mime from 'mime-types';
 import fs from 'fs';
 import path from 'path';

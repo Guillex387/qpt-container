@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import errors from './errors';
+import errors from '../errors';
 export default class Encryptor {
     private static formatSymKey(symKey: string): Buffer {
         if(symKey.length > 32){

@@ -1,11 +1,10 @@
 import path from "path";
 import fs from "fs";
-import mainEventHandler from './mainEvents';
 import Container from "./container";
 import Encryptor from "./crypter";
-import errors from "./errors";
+import errors from "../errors";
 import Compressor from "./compress";
-import { controllerPath, disksFolder } from './config';
+import { controllerPath, disksFolder } from '../config';
 interface FileI {
     type: "file";
     name: string;
@@ -29,13 +28,11 @@ export default class Disks {
     public static async init(): Promise<void> {
         if (!fs.existsSync(controllerPath)) {
             Disks.createDiskControllerFile();
-            return;
         }
         if (!fs.existsSync(disksFolder)) {
             fs.mkdirSync(disksFolder);
-            return;
         }
-        Disks.availables = JSON.parse(fs.readFileSync(controllerPath).toString('utf-8'));
+        Disks.availables = JSON.parse(fs.readFileSync(controllerPath, { encoding: 'utf-8' }));
         return;
     }
     public static createDiskControllerFile(): void {
@@ -486,6 +483,3 @@ export default class Disks {
         return;
     }
 }
-Disks.init().then(() => {
-    mainEventHandler.emit('disks-ready');
-});

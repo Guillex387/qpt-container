@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import errors from './errors';
-import { disksFolder } from './config';
+import errors from '../errors';
+import { disksFolder } from '../config';
 interface Address {
     id: string;
     locations: [number, number];

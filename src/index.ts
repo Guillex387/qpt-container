@@ -1,12 +1,13 @@
 import { Menu, app, BrowserWindow, ipcMain, dialog } from 'electron';
 import Dialogs from './dialogs';
 import path from 'path';
-import Disks from './disk';
-import mainEventHandler from './mainEvents';
+import Disks from './lib/disk';
 import { handleError, handleErrorAsync } from './errors';
 import { production } from './config';
 import fs from 'fs';
 import handleWork from './work';
+import { EventEmitter } from 'events';
+let mainEventHandler = new EventEmitter();
 const mainHtml = path.join(__dirname, '..', 'views', 'index.html');
 let mainWindow: BrowserWindow;
 const devMenu: Menu = Menu.buildFromTemplate([
@@ -196,8 +197,8 @@ function deployMainWindow(): void {
         app.quit();
     });
 }
-mainEventHandler.on('disks-ready', () => {
-    app.on('ready', deployMainWindow);
+app.on('ready', () => {
+    Disks.init().then(deployMainWindow);
 });
 ipcMain.on('new-file', async (ev, originPath) => {
     handleWork(async () => {
