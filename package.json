@@ -1,7 +1,7 @@
 {
-    "name": "QPT-container",
-    "version": "0.9.0",
-    "description": "This is a program for encrypt files into 'containers' and protect your data",
+    "name": "qpt-container",
+    "version": "0.9.5",
+    "description": "This is a program for encrypt files into virtual disks and protect your data",
     "main": "./app/index.js",
     "scripts": {
         "start": "electron .",
