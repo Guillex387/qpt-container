@@ -13,13 +13,7 @@ export default class DiskController {
         if(rawResponse === null){
             return null;
         }
-        let [base64_str, mimeType]: [string, string] = rawResponse;
-        const byteChars = atob(base64_str);
-        let byteNums = new Array(byteChars.length);
-        for (let i = 0; i < byteChars.length; i++) {
-            byteNums[i] = byteChars.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNums);
+        let [byteArray, mimeType]: [Uint8Array, string] = rawResponse;
         let data = new Blob([byteArray], { type: mimeType });
         return { data, mimeType };
     }

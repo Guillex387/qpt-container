@@ -231,7 +231,7 @@ ipcMain.on('get-file', (ev, filePath) => {
     handleWork(async () => {
         await handleErrorAsync(async () => {
             const { data, mimeType } = await Disks.getFileContent(filePath);
-            ev.returnValue = [data.toString('base64'), mimeType];
+            ev.returnValue = [Uint8Array.from(data), mimeType];
         }, (rolErr, msg) => {
             ev.returnValue = null;
             Dialogs.openErrorDialog(rolErr, msg);
