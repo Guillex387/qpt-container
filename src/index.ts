@@ -1,10 +1,10 @@
 import { Menu, app, BrowserWindow, ipcMain, dialog } from 'electron';
 import Dialogs from './dialogs';
-import path from 'path';
+import * as path from 'path';
 import Disks from './lib/disk';
 import { handleError, handleErrorAsync } from './errors';
 import { production } from './config';
-import fs from 'fs';
+import * as fs from 'fs';
 import handleWork from './work';
 import { EventEmitter } from 'events';
 let mainEventHandler = new EventEmitter();

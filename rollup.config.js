@@ -1,0 +1,24 @@
+import typescript from '@rollup/plugin-typescript'
+import { terser } from 'rollup-plugin-terser'
+import fs from 'fs'
+import path from 'path'
+const production = !process.env.ROLLUP_WATCH
+function resetDir() {
+    const mapFile = path.join(__dirname, 'app', 'bundle.js.map')
+    fs.unlinkSync(mapFile)
+}
+production && resetDir()
+export default {
+    input: 'src/index.ts',
+    external: ['fs', 'path', 'electron', 'events', 'zlib', 'crypto', 'mime-types'],
+    plugins: [
+        typescript({ target: 'es6' }),
+        production && terser({ compress: true, mangle: true, toplevel: true })
+    ],
+    output: {
+        file: 'app/bundle.js',
+        format: 'cjs',
+        sourcemapFile: 'app/bundle.js.map',
+        sourcemap: !production
+    }
+}

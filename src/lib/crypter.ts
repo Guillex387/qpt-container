@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import errors from '../errors';
 export default class Encryptor {
     private static formatSymKey(symKey: string): Buffer {

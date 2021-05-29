@@ -1,8 +1,8 @@
 import { dialog, BrowserWindow, ipcMain } from 'electron';
 import Disks from './lib/disk';
-import mime from 'mime-types';
-import fs from 'fs';
-import path from 'path';
+import * as mime from 'mime-types';
+import * as fs from 'fs';
+import * as path from 'path';
 const addDiskHtml = path.join(__dirname, '..', 'views', 'addDisk.html');
 const loaderHtml = path.join(__dirname, '..', 'views', 'loader.html');
 const removeDiskHtml = path.join(__dirname, '..', 'views', 'removeDisk.html');

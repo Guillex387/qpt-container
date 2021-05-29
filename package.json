@@ -2,10 +2,12 @@
     "name": "qpt-container",
     "version": "0.9.5",
     "description": "This is a program for encrypt files into virtual disks and protect your data",
-    "main": "./app/index.js",
+    "main": "./app/bundle.js",
     "scripts": {
         "start": "electron .",
-        "build": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=win32 --arch=x64 --ignore=disks --ignore=disks.json --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=Actualizacion.txt --ignore=.git --ignore=.vscode --ignore=.js.map"
+        "build": "rollup -c",
+        "dev": "rollup -c -w",
+        "build-pkg": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=win32 --arch=x64 --ignore=disks --ignore=disks.json --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=Actualizacion.txt --ignore=.git --ignore=.vscode --ignore=.js.map"
     },
     "keywords": [],
     "author": "QPT",
@@ -14,10 +16,15 @@
         "mime-types": "^2.1.28"
     },
     "devDependencies": {
+        "@rollup/plugin-typescript": "^8.2.1",
         "@types/electron": "^1.6.10",
         "@types/mime-types": "^2.1.0",
         "@types/node": "^14.14.20",
         "electron": "^12.0.2",
-        "electron-packager": "^15.2.0"
+        "electron-packager": "^15.2.0",
+        "rollup": "^2.50.3",
+        "rollup-plugin-terser": "^7.0.2",
+        "tslib": "^2.2.0",
+        "typescript": "^4.3.2"
     }
 }
