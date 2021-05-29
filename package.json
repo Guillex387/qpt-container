@@ -7,7 +7,7 @@
         "start": "electron .",
         "build": "rollup -c",
         "dev": "rollup -c -w",
-        "build-pkg": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=win32 --arch=x64 --ignore=disks --ignore=disks.json --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=Actualizacion.txt --ignore=.git --ignore=.vscode --ignore=.js.map"
+        "build-pkg": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=win32 --arch=x64 --ignore=data --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=Updates.txt --ignore=.git --ignore=.vscode --ignore=rollup.config.js"
     },
     "keywords": [],
     "author": "QPT",
