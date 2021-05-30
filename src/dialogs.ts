@@ -71,8 +71,8 @@ class Dialogs {
                 darkTheme: true,
                 minimizable: false,
                 maximizable: false,
-                width: 600,
-                height: 300,
+                width: 550,
+                height: 200,
                 parent,
                 modal,
                 webPreferences: {
@@ -108,8 +108,8 @@ class Dialogs {
                 resizable: false,
                 minimizable: false,
                 maximizable: false,
-                width: 850,
-                height: 300,
+                width: 750,
+                height: 250,
                 parent,
                 modal,
                 webPreferences: {
@@ -144,8 +144,8 @@ class Dialogs {
                 darkTheme: true,
                 minimizable: false,
                 maximizable: false,
-                width: 600,
-                height: 300,
+                width: 550,
+                height: 200,
                 parent,
                 modal,
                 webPreferences: {

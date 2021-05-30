@@ -13,7 +13,7 @@
 
         main {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 30px 1fr;
             position: fixed;
             top: 50%;
             left: 50%;
@@ -26,9 +26,9 @@
             color: white;
             background-color: #242424;
             border: none;
-            font-size: larger;
-            margin: 20px;
-            padding: 10px 20px;
+            font-size: 20px;
+            margin: 5px;
+            padding: 5px 10px;
             width: auto;
             outline: none;
         }
@@ -51,6 +51,7 @@
     <main>
         <select id="selected-disk"></select>
         <input type="password" id="password" placeholder="Password">
+        <img id="vsb" src="./img/visibility_off_white_24dp.svg" style="margin: auto;">
         <button id="btn1">Delete</button>
     </main>
 </body>
@@ -59,6 +60,16 @@
     let disks = document.getElementById("selected-disk");
     let password = document.getElementById("password");
     let btn = document.getElementById("btn1");
+    let icon = document.getElementById("vsb");
+    let visible = false;
+    const visibleIcon = './img/visibility_white_24dp.svg';
+    const notVisibleIcon = './img/visibility_off_white_24dp.svg';
+    const setVisisbility = () => {
+        visible = !visible;
+        visible ? icon.setAttribute('src', visibleIcon) : icon.setAttribute('src', notVisibleIcon);
+        visible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+    };
+    icon.addEventListener('click', setVisisbility);
     ipcRenderer.on("send-info", (ev, diskList) => {
         diskList.forEach((diskName) => {
             disks.innerHTML += `<option value="${diskName}">${diskName}</option>`;
