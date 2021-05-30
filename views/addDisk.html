@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add disk</title>
     <style>
-        body{
+        body {
             background-color: #363636;
         }
-        main{
+
+        main {
             display: grid;
             grid-template-columns: 1fr 1fr 30px 1fr;
             position: fixed;
@@ -17,7 +19,10 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
-        select, input, button{
+
+        select,
+        input,
+        button {
             color: white;
             background-color: #242424;
             border: none;
@@ -27,21 +32,26 @@
             width: auto;
             outline: none;
         }
-        input{
+
+        input {
             border: 2px solid transparent;
         }
-        .input-error{
+
+        .input-error {
             border-color: red;
             color: red;
         }
-        button:hover{
+
+        button:hover {
             background-color: #303030;
         }
-        button:active{
+
+        button:active {
             background-color: #2b2b2b;
         }
     </style>
 </head>
+
 <body>
     <main>
         <input type="text" id="name" placeholder="Put here the name">
@@ -71,10 +81,10 @@
             alreadyCreated.push(diskName);
         });
     });
-    function exists(name){
+    function exists(name) {
         let out = false;
         alreadyCreated.forEach(e => {
-            if(e === name){
+            if (e === name) {
                 out = true;
                 return;
             }
@@ -82,9 +92,9 @@
         return out;
     }
     btn.addEventListener('click', () => {
-        if(exists(name.value)){
+        if (exists(name.value)) {
             name.className = 'input-error';
-        }else{
+        } else {
             ipcRenderer.sendSync('create-disk', name.value, password.value);
         }
     });
@@ -92,4 +102,5 @@
         name.className = '';
     });
 </script>
+
 </html>

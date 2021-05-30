@@ -26,7 +26,7 @@ export default class Disks {
     private static loaded: Disk[] = [];
     private static availables: string[] = [];
     public static async init(): Promise<void> {
-        if(!fs.existsSync(dataFolder)){
+        if (!fs.existsSync(dataFolder)) {
             fs.mkdirSync(dataFolder);
             if (!fs.existsSync(controllerPath)) {
                 Disks.createDiskControllerFile();
@@ -327,7 +327,7 @@ export default class Disks {
         let disk = Disks.getDiskObj(segments[0]);
         let errorDisk8 = false;
         let filesAddress = getFilesAddress(Disks.getFolder(path).content);
-        for(let i = 0; i < filesAddress.length; i++){
+        for (let i = 0; i < filesAddress.length; i++) {
             try {
                 await disk.container.rmContent(filesAddress[i]);
             } catch (error) {
@@ -348,7 +348,7 @@ export default class Disks {
                 }
             }
         });
-        if(errorDisk8){
+        if (errorDisk8) {
             throw errors.disk[8];
         }
         if (!out) {

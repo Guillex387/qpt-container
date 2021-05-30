@@ -2,18 +2,18 @@ import * as crypto from 'crypto';
 import errors from '../errors';
 export default class Encryptor {
     private static formatSymKey(symKey: string): Buffer {
-        if(symKey.length > 32){
+        if (symKey.length > 32) {
             throw errors.encrypter[1];
         }
         let formatKey = '';
         let loops = 32 - symKey.length;
-        if(loops !== 0){
-            for(let i = 0; i < loops; i++){
+        if (loops !== 0) {
+            for (let i = 0; i < loops; i++) {
                 formatKey += '0';
             }
         }
         formatKey += symKey;
-        return Buffer.from(formatKey, 'utf-8'); 
+        return Buffer.from(formatKey, 'utf-8');
     }
     public static encrypt(buff: Buffer, pass: string): Buffer {
         const symKey = Encryptor.formatSymKey(pass);
@@ -33,7 +33,7 @@ export default class Encryptor {
         }
     }
     public static verifyPass(pass: string): boolean {
-        if(pass.length > 32){
+        if (pass.length > 32) {
             return false;
         }
         return true;

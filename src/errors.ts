@@ -26,24 +26,24 @@ export function handleError(func: Function, cb: (rolError: string, message: stri
     } catch (error) {
         let rolError = 'Unknown';
         let errorCode = -1;
-        for(let i = 0; i < errors.disk.length; i++){
-            if(error === errors.disk[i]){
+        for (let i = 0; i < errors.disk.length; i++) {
+            if (error === errors.disk[i]) {
                 rolError = 'Disk';
                 errorCode = i;
                 break;
             }
         }
-        if(errorCode !== -1){
-            for(let i = 0; i < errors.container.length; i++){
-                if(error === errors.container[i]){
+        if (errorCode !== -1) {
+            for (let i = 0; i < errors.container.length; i++) {
+                if (error === errors.container[i]) {
                     rolError = 'Container';
                     errorCode = i;
                     break;
                 }
             }
-            if(errorCode !== -1){
-                for(let i = 0; i < errors.encrypter.length; i++){
-                    if(error === errors.encrypter[i]){
+            if (errorCode !== -1) {
+                for (let i = 0; i < errors.encrypter.length; i++) {
+                    if (error === errors.encrypter[i]) {
                         rolError = 'Encrypter';
                         errorCode = i;
                         break;
@@ -60,24 +60,24 @@ export async function handleErrorAsync(func: () => Promise<any>, cb: (rolError: 
     } catch (error) {
         let rolError = 'Unknown';
         let errorCode = -1;
-        for(let i = 0; i < errors.disk.length; i++){
-            if(error === errors.disk[i]){
+        for (let i = 0; i < errors.disk.length; i++) {
+            if (error === errors.disk[i]) {
                 rolError = 'Disk';
                 errorCode = i;
                 break;
             }
         }
-        if(errorCode !== -1){
-            for(let i = 0; i < errors.container.length; i++){
-                if(error === errors.container[i]){
+        if (errorCode !== -1) {
+            for (let i = 0; i < errors.container.length; i++) {
+                if (error === errors.container[i]) {
                     rolError = 'Container';
                     errorCode = i;
                     break;
                 }
             }
-            if(errorCode !== -1){
-                for(let i = 0; i < errors.encrypter.length; i++){
-                    if(error === errors.encrypter[i]){
+            if (errorCode !== -1) {
+                for (let i = 0; i < errors.encrypter.length; i++) {
+                    if (error === errors.encrypter[i]) {
                         rolError = 'Encrypter';
                         errorCode = i;
                         break;

@@ -10,7 +10,7 @@ export default class DiskController {
     }
     public static async getFileContent(filePath: string): Promise<{ data: Blob, mimeType: string } | null> {
         let rawResponse = ipcRenderer.sendSync('get-file', filePath);
-        if(rawResponse === null){
+        if (rawResponse === null) {
             return null;
         }
         let [byteArray, mimeType]: [Uint8Array, string] = rawResponse;

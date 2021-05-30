@@ -62,7 +62,7 @@ class Dialogs {
             title: `${rolError} error`
         });
     }
-    public static async openLoadDiskDialog(parent?: BrowserWindow): Promise<{name: string, pass: string} | null> {
+    public static async openLoadDiskDialog(parent?: BrowserWindow): Promise<{ name: string, pass: string } | null> {
         return new Promise((resolve, reject) => {
             let finish = false;
             let modal: boolean = parent ? true : false;
@@ -88,17 +88,17 @@ class Dialogs {
             });
             ipcMain.on('load-disk', (ev, name, pass) => {
                 finish = true;
-                resolve({name, pass});
+                resolve({ name, pass });
                 loaderWindow.close();
             });
             loaderWindow.on('close', () => {
-                if(!finish){
+                if (!finish) {
                     resolve(null);
                 }
             });
         });
     }
-    public static async openAddDiskDialog(parent?: BrowserWindow): Promise<{name: string, pass: string} | null> {
+    public static async openAddDiskDialog(parent?: BrowserWindow): Promise<{ name: string, pass: string } | null> {
         return new Promise((resolve, reject) => {
             let finish = false;
             let modal: boolean = parent ? true : false;
@@ -125,7 +125,7 @@ class Dialogs {
             });
             ipcMain.on('create-disk', (ev, name, pass) => {
                 finish = true;
-                resolve({name, pass});
+                resolve({ name, pass });
                 addDiskWindow.close();
             });
             addDiskWindow.on('close', () => {
@@ -135,7 +135,7 @@ class Dialogs {
             });
         });
     }
-    public static async openRemoveDiskDialog(parent?: BrowserWindow): Promise<{selected: string, pass: string} | null> {
+    public static async openRemoveDiskDialog(parent?: BrowserWindow): Promise<{ selected: string, pass: string } | null> {
         return new Promise((resolve, reject) => {
             let finish: boolean = false;
             let modal: boolean = parent ? true : false;
@@ -161,7 +161,7 @@ class Dialogs {
             });
             ipcMain.on('remove-disk', (ev, selected, pass) => {
                 finish = true;
-                resolve({selected, pass});
+                resolve({ selected, pass });
                 removeDiskWindow.close();
             });
             removeDiskWindow.on('close', () => {

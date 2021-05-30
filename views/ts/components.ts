@@ -21,16 +21,16 @@ export const loadFile = (filename: string, path: string, onlyRender: boolean = f
         </div>
     </li>
     `;
-    if(onlyRender){
+    if (onlyRender) {
         return render();
     }
     let segments = path.split('/');
     segments.pop();
     let newPath = '';
-    segments.forEach((e,i) => {
-        if(i === (segments.length - 1)){
+    segments.forEach((e, i) => {
+        if (i === (segments.length - 1)) {
             newPath += e;
-        }else{
+        } else {
             newPath += `${e}/`;
         }
     });
@@ -51,29 +51,29 @@ export const loadFolder = (props: FolderI, path: string, onlyRender: boolean = f
         </span>
         <ul class="nested">
         ${((): string => {
-        let out = '';
-        props.content.forEach(el => {
-            if (el.type == 'file') {
-                out += loadFile(el.name, `${path}/${el.name}`, true);
-            } else if (el.type == 'folder') {
-                out += loadFolder(el, `${path}/${el.name}`, true);
-            }
-        });
-        return out;
-    })()}
+            let out = '';
+            props.content.forEach(el => {
+                if (el.type == 'file') {
+                    out += loadFile(el.name, `${path}/${el.name}`, true);
+                } else if (el.type == 'folder') {
+                    out += loadFolder(el, `${path}/${el.name}`, true);
+                }
+            });
+            return out;
+        })()}
         </ul>
     </li>
     `;
-    if(onlyRender){
+    if (onlyRender) {
         return render();
     }
     let segments = path.split('/');
     segments.pop();
     let newPath = '';
-    segments.forEach((e,i) => {
-        if(i === (segments.length - 1)){
+    segments.forEach((e, i) => {
+        if (i === (segments.length - 1)) {
             newPath += e;
-        }else{
+        } else {
             newPath += `${e}/`;
         }
     });
