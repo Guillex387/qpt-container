@@ -7,6 +7,7 @@ const addDiskHtml = path.join(__dirname, '..', 'views', 'addDisk.html');
 const loaderHtml = path.join(__dirname, '..', 'views', 'loader.html');
 const removeDiskHtml = path.join(__dirname, '..', 'views', 'removeDisk.html');
 class Dialogs {
+    private static dialogOpened: boolean = false;
     public static async openFileDialog(): Promise<{
         name: string;
         mimeType: string;
@@ -64,99 +65,114 @@ class Dialogs {
     }
     public static async openLoadDiskDialog(parent?: BrowserWindow): Promise<{ name: string, pass: string } | null> {
         return new Promise(resolve => {
-            let modal: boolean = parent ? true : false;
-            let loaderWindow = new BrowserWindow({
-                show: false,
-                darkTheme: true,
-                minimizable: false,
-                maximizable: false,
-                width: 550,
-                height: 200,
-                parent,
-                modal,
-                webPreferences: {
-                    nodeIntegration: true,
-                    contextIsolation: false
-                }
-            });
-            loaderWindow.setMenu(null);
-            loaderWindow.loadFile(loaderHtml);
-            loaderWindow.once('ready-to-show', () => loaderWindow.show());
-            loaderWindow.webContents.once('dom-ready', () => {
-                loaderWindow.webContents.send('send-info', Disks.getNotLoadedDisks());
-            });
-            ipcMain.on('load-disk', (ev, name, pass) => {
-                loaderWindow.destroy();
-                resolve({ name, pass });
-            });
-            loaderWindow.on('close', () => {
+            if (!Dialogs.dialogOpened) {
+                Dialogs.dialogOpened = true;
+                let loaderWindow = new BrowserWindow({
+                    show: false,
+                    darkTheme: true,
+                    minimizable: false,
+                    maximizable: false,
+                    width: 550,
+                    height: 200,
+                    parent,
+                    webPreferences: {
+                        nodeIntegration: true,
+                        contextIsolation: false
+                    }
+                });
+                loaderWindow.setMenu(null);
+                loaderWindow.loadFile(loaderHtml);
+                loaderWindow.once('ready-to-show', () => loaderWindow.show());
+                loaderWindow.webContents.once('dom-ready', () => {
+                    loaderWindow.webContents.send('send-info', Disks.getNotLoadedDisks());
+                });
+                ipcMain.on('load-disk', (ev, name, pass) => {
+                    loaderWindow.destroy();
+                    Dialogs.dialogOpened = false;
+                    resolve({ name, pass });
+                });
+                loaderWindow.on('close', () => {
+                    Dialogs.dialogOpened = false;
+                    resolve(null);
+                });
+            } else {
                 resolve(null);
-            });
+            }
         });
     }
     public static async openAddDiskDialog(parent?: BrowserWindow): Promise<{ name: string, pass: string } | null> {
         return new Promise(resolve => {
-            let modal: boolean = parent ? true : false;
-            let addDiskWindow = new BrowserWindow({
-                show: false,
-                darkTheme: true,
-                resizable: false,
-                minimizable: false,
-                maximizable: false,
-                width: 750,
-                height: 250,
-                parent,
-                modal,
-                webPreferences: {
-                    nodeIntegration: true,
-                    contextIsolation: false
-                }
-            });
-            addDiskWindow.setMenu(null);
-            addDiskWindow.loadFile(addDiskHtml);
-            addDiskWindow.once('ready-to-show', () => addDiskWindow.show());
-            addDiskWindow.webContents.once('dom-ready', () => {
-                addDiskWindow.webContents.send('send-info', Disks.getAllDisks());
-            });
-            ipcMain.on('create-disk', (ev, name, pass) => {
-                addDiskWindow.destroy();
-                resolve({ name, pass });
-            });
-            addDiskWindow.on('close', () => {
+            if (!Dialogs.dialogOpened) {
+                Dialogs.dialogOpened = true;
+                let addDiskWindow = new BrowserWindow({
+                    show: false,
+                    darkTheme: true,
+                    resizable: false,
+                    minimizable: false,
+                    maximizable: false,
+                    width: 750,
+                    height: 250,
+                    parent,
+                    webPreferences: {
+                        nodeIntegration: true,
+                        contextIsolation: false
+                    }
+                });
+                addDiskWindow.setMenu(null);
+                addDiskWindow.loadFile(addDiskHtml);
+                addDiskWindow.once('ready-to-show', () => addDiskWindow.show());
+                addDiskWindow.webContents.once('dom-ready', () => {
+                    addDiskWindow.webContents.send('send-info', Disks.getAllDisks());
+                });
+                ipcMain.on('create-disk', (ev, name, pass) => {
+                    addDiskWindow.destroy();
+                    Dialogs.dialogOpened = false;
+                    resolve({ name, pass });
+                });
+                addDiskWindow.on('close', () => {
+                    Dialogs.dialogOpened = false;
+                    resolve(null);
+                });
+            } else {
                 resolve(null);
-            });
+            }
         });
     }
     public static async openRemoveDiskDialog(parent?: BrowserWindow): Promise<{ selected: string, pass: string } | null> {
         return new Promise(resolve => {
-            let modal: boolean = parent ? true : false;
-            let removeDiskWindow = new BrowserWindow({
-                show: false,
-                darkTheme: true,
-                minimizable: false,
-                maximizable: false,
-                width: 550,
-                height: 200,
-                parent,
-                modal,
-                webPreferences: {
-                    nodeIntegration: true,
-                    contextIsolation: false
-                }
-            });
-            removeDiskWindow.setMenu(null);
-            removeDiskWindow.loadFile(removeDiskHtml);
-            removeDiskWindow.once('ready-to-show', () => removeDiskWindow.show());
-            removeDiskWindow.webContents.once('dom-ready', () => {
-                removeDiskWindow.webContents.send('send-info', Disks.getAllDisks());
-            });
-            ipcMain.on('remove-disk', (ev, selected, pass) => {
-                removeDiskWindow.destroy();
-                resolve({ selected, pass });
-            });
-            removeDiskWindow.on('close', () => {
+            if (!Dialogs.dialogOpened) {
+                Dialogs.dialogOpened = true;
+                let removeDiskWindow = new BrowserWindow({
+                    show: false,
+                    darkTheme: true,
+                    minimizable: false,
+                    maximizable: false,
+                    width: 550,
+                    height: 200,
+                    parent,
+                    webPreferences: {
+                        nodeIntegration: true,
+                        contextIsolation: false
+                    }
+                });
+                removeDiskWindow.setMenu(null);
+                removeDiskWindow.loadFile(removeDiskHtml);
+                removeDiskWindow.once('ready-to-show', () => removeDiskWindow.show());
+                removeDiskWindow.webContents.once('dom-ready', () => {
+                    removeDiskWindow.webContents.send('send-info', Disks.getAllDisks());
+                });
+                ipcMain.on('remove-disk', (ev, selected, pass) => {
+                    removeDiskWindow.destroy();
+                    Dialogs.dialogOpened = false;
+                    resolve({ selected, pass });
+                });
+                removeDiskWindow.on('close', () => {
+                    Dialogs.dialogOpened = false;
+                    resolve(null);
+                });
+            } else {
                 resolve(null);
-            });
+            }
         });
     }
 }
