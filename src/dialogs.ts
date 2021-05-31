@@ -63,8 +63,7 @@ class Dialogs {
         });
     }
     public static async openLoadDiskDialog(parent?: BrowserWindow): Promise<{ name: string, pass: string } | null> {
-        return new Promise((resolve, reject) => {
-            let finish = false;
+        return new Promise(resolve => {
             let modal: boolean = parent ? true : false;
             let loaderWindow = new BrowserWindow({
                 show: false,
@@ -87,20 +86,16 @@ class Dialogs {
                 loaderWindow.webContents.send('send-info', Disks.getNotLoadedDisks());
             });
             ipcMain.on('load-disk', (ev, name, pass) => {
-                finish = true;
+                loaderWindow.destroy();
                 resolve({ name, pass });
-                loaderWindow.close();
             });
             loaderWindow.on('close', () => {
-                if (!finish) {
-                    resolve(null);
-                }
+                resolve(null);
             });
         });
     }
     public static async openAddDiskDialog(parent?: BrowserWindow): Promise<{ name: string, pass: string } | null> {
-        return new Promise((resolve, reject) => {
-            let finish = false;
+        return new Promise(resolve => {
             let modal: boolean = parent ? true : false;
             let addDiskWindow = new BrowserWindow({
                 show: false,
@@ -124,20 +119,16 @@ class Dialogs {
                 addDiskWindow.webContents.send('send-info', Disks.getAllDisks());
             });
             ipcMain.on('create-disk', (ev, name, pass) => {
-                finish = true;
+                addDiskWindow.destroy();
                 resolve({ name, pass });
-                addDiskWindow.close();
             });
             addDiskWindow.on('close', () => {
-                if (!finish) {
-                    resolve(null);
-                }
+                resolve(null);
             });
         });
     }
     public static async openRemoveDiskDialog(parent?: BrowserWindow): Promise<{ selected: string, pass: string } | null> {
-        return new Promise((resolve, reject) => {
-            let finish: boolean = false;
+        return new Promise(resolve => {
             let modal: boolean = parent ? true : false;
             let removeDiskWindow = new BrowserWindow({
                 show: false,
@@ -160,14 +151,11 @@ class Dialogs {
                 removeDiskWindow.webContents.send('send-info', Disks.getAllDisks());
             });
             ipcMain.on('remove-disk', (ev, selected, pass) => {
-                finish = true;
+                removeDiskWindow.destroy();
                 resolve({ selected, pass });
-                removeDiskWindow.close();
             });
             removeDiskWindow.on('close', () => {
-                if (!finish) {
-                    resolve(null);
-                }
+                resolve(null);
             });
         });
     }
