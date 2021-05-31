@@ -5,3 +5,4 @@ export const production: boolean = true;
 export const dataFolder: string = production ? path.join(appPath, '..', '..', 'data') : path.join(__dirname, '..', 'data');
 export const controllerPath: string = path.join(dataFolder, 'disks.json');
 export const disksFolder: string = path.join(dataFolder, 'disks');
+export const cacheFolder: string | null = production ? path.join(app.getPath('cache'), 'qpt-container') : null;

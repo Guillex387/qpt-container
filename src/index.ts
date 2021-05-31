@@ -3,7 +3,7 @@ import Dialogs from './dialogs';
 import * as path from 'path';
 import Disks from './lib/disk';
 import { handleError, handleErrorAsync } from './errors';
-import { production } from './config';
+import { production, cacheFolder } from './config';
 import * as fs from 'fs';
 import handleWork from './work';
 import { EventEmitter } from 'events';
@@ -191,9 +191,10 @@ function deployMainWindow(): void {
     mainWindow.setMenu(production ? distMenu : devMenu);
     mainWindow.loadFile(mainHtml);
     mainWindow.maximize();
-    mainWindow.once('ready-to-show', () => mainWindow.show());
-    mainWindow.on('close', () => {
+    mainWindow.on('ready-to-show', mainWindow.show);
+    mainWindow.on('closed', () => {
         Disks.save();
+        cacheFolder && fs.rmSync(cacheFolder, { recursive: true });
         app.quit();
     });
 }
