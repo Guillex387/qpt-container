@@ -2,10 +2,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import errors from '../errors';
 import { disksFolder } from '../config';
-interface Address {
-    id: string;
-    locations: [number, number];
-}
 export default class Container {
     private static formatPath(name: string): [string, string] {
         let basePath = path.join(disksFolder, name);
@@ -28,87 +24,88 @@ export default class Container {
         return new Container(containerPh, addressPh);
     }
     private containerPath: string;
-    private addressFile: string;
-    private addressList: Address[];
+    private freeSpacesPath: string;
+    private freeSpacesList: string[];
     private fd: number;
-    private static updateAddrss(addrFilePath: string, newValue: Address[]): void {
-        fs.writeFileSync(addrFilePath, Buffer.from(JSON.stringify(newValue), 'utf-8'));
-    }
-    private generateAddress(): string {
-        const salt = 'abcdefghijklmnopqrstuvwxyz1234567890';
-        let address = '';
-        for (let i = 0; i < 16; i++) {
-            address += salt[Math.floor(Math.random() * salt.length)];
-        }
-        let IDexist = false;
-        this.addressList.forEach(e => {
-            if (e.id === address) {
-                IDexist = true;
-            }
+    private addFreeSpace(s: string): void {
+        this.freeSpacesList.push(s);
+        this.freeSpacesList.sort((a, b) => {
+            let locsA = Container.addressParseStr(a);
+            let locsB = Container.addressParseStr(b);
+            let sizeA = (locsA[1] - locsA[0]) + 1;
+            let sizeB = (locsB[1] - locsB[0]) + 1;
+            return sizeB - sizeA;
         });
-        if (IDexist) {
-            return this.generateAddress();
-        }
-        return address;
     }
-    private findAddress(address: string): number {
-        let out = -1;
-        this.addressList.forEach((e, index) => {
-            if (e.id === address) {
-                out = index;
-            }
-        });
-        return out;
+    private saveFreeSpaces(): void {
+        fs.writeFileSync(this.freeSpacesPath, JSON.stringify(this.freeSpacesList), { encoding: 'utf-8' });
+    }
+    private static addressParseStr(str: string): [number, number] {
+        let buf = Buffer.from(str, 'base64');
+        if (buf.length !== 16) throw 'Format error';
+        let firstByte = Number(buf.readBigUInt64BE(0));
+        let lastByte = Number(buf.readBigUInt64BE(8));
+        return [firstByte, lastByte];
+    }
+    private static addressParseLocs(locs: [number, number]): string {
+        let buf = Buffer.alloc(16);
+        buf.writeBigUInt64BE(BigInt(locs[0]), 0);
+        buf.writeBigUInt64BE(BigInt(locs[1]), 8);
+        return buf.toString('base64');
     }
     public async addContent(content: Buffer): Promise<string> {
+        if (content.byteLength === 0) {
+            throw errors.container[3];
+        }
+        if (this.freeSpacesList.length > 0) {
+            const locs = Container.addressParseStr(this.freeSpacesList[0]);
+            let spaceSize = (locs[1] - locs[0]) + 1;
+            if (content.byteLength <= spaceSize) {
+                const contentLocs: [number, number] = [locs[0], (locs[0] + content.byteLength - 1)];
+                fs.writeSync(this.fd, content, 0, content.byteLength, locs[0]);
+                this.freeSpacesList.shift();
+                let leftoverSpace = spaceSize - content.byteLength;
+                if (leftoverSpace !== 0) {
+                    const leftoverLocs: [number, number] = [locs[0] + content.byteLength, locs[1]];
+                    this.addFreeSpace(Container.addressParseLocs(leftoverLocs));
+                }
+                this.saveFreeSpaces();
+                return Container.addressParseLocs(contentLocs);
+            }
+        }
         const bytes = fs.statSync(this.containerPath).size;
-        const location: [number, number] = [bytes, (bytes + content.byteLength - 1)];
+        const contentlocs: [number, number] = [bytes, (bytes + content.byteLength - 1)];
         fs.appendFileSync(this.containerPath, content);
-        let address = this.generateAddress();
-        this.addressList.push({ id: address, locations: location });
-        Container.updateAddrss(this.addressFile, this.addressList);
-        return address;
+        return Container.addressParseLocs(contentlocs);
     }
     public async rmContent(address: string): Promise<void> {
-        let index = this.findAddress(address);
-        if (index === -1) {
+        const bytes = fs.statSync(this.containerPath).size;
+        const locs = Container.addressParseStr(address);
+        if (locs[1] >= bytes) {
             throw errors.container[2];
         }
-        const locations: [number, number] = this.addressList[index].locations;
-        this.addressList.splice(index, 1);
-        const rmCount = (locations[1] - locations[0]) + 1;
-        this.addressList.forEach((el, i) => {
-            let b = el.locations[0] - rmCount;
-            let e = el.locations[1] - rmCount;
-            if (b >= 0) {
-                this.addressList[i].locations = [b, e];
-            }
-        });
-        const bytes = fs.statSync(this.containerPath).size;
-        let afterBytes = Buffer.alloc(bytes - rmCount - locations[0]);
-        fs.readSync(this.fd, afterBytes, 0, afterBytes.byteLength, (locations[1] + 1));
-        fs.truncateSync(this.containerPath, locations[0]);
-        fs.appendFileSync(this.containerPath, afterBytes);
-        Container.updateAddrss(this.addressFile, this.addressList);
+        this.addFreeSpace(address);
+        this.saveFreeSpaces();
         return;
     }
     public async getContent(address: string): Promise<Buffer> {
-        let index = this.findAddress(address);
-        if (index === -1) {
+        const bytes = fs.statSync(this.containerPath).size;
+        const locs: [number, number] = Container.addressParseStr(address);
+        if (locs[1] >= bytes) {
             throw errors.container[2];
         }
-        const locations = this.addressList[index].locations;
-        let buf = Buffer.alloc((locations[1] - locations[0]) + 1);
-        fs.readSync(this.fd, buf, 0, ((locations[1] - locations[0]) + 1), locations[0]);
+        let contentSize = locs[1] - locs[0] + 1;
+        let buf = Buffer.alloc(contentSize);
+        fs.readSync(this.fd, buf, 0, contentSize, locs[0]);
         return buf;
     }
     public closeContainer(): void {
         fs.closeSync(this.fd);
     }
-    private constructor(containerPath: string, addressPath: string) {
+    private constructor(containerPath: string, frspPath: string) {
         this.containerPath = containerPath;
-        this.addressFile = addressPath;
-        this.addressList = JSON.parse(fs.readFileSync(addressPath, { encoding: 'utf-8' }));
-        this.fd = fs.openSync(containerPath, 'r');
+        this.freeSpacesPath = frspPath;
+        this.freeSpacesList = JSON.parse(fs.readFileSync(frspPath, { encoding: 'utf-8' }));
+        this.fd = fs.openSync(containerPath, 'r+');
     }
 }

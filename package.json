@@ -1,6 +1,6 @@
 {
     "name": "qpt-container",
-    "version": "0.9.5",
+    "version": "0.9.8",
     "description": "This is a program for encrypt files into virtual disks and protect your data",
     "main": "./app/bundle.js",
     "scripts": {

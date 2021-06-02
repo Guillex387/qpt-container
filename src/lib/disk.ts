@@ -3,7 +3,6 @@ import * as fs from "fs";
 import Container from "./container";
 import Encryptor from "./crypter";
 import errors from "../errors";
-import Compressor from "./compress";
 import { controllerPath, disksFolder, dataFolder } from '../config';
 interface FileI {
     type: "file";
@@ -177,7 +176,7 @@ export default class Disks {
         }
         return {
             mimeType: res.mimeType,
-            data: Compressor.deCompress(Encryptor.decrypt(await disk.container.getContent(res.content), disk.key))
+            data: Encryptor.decrypt(await disk.container.getContent(res.content), disk.key)
         };
     }
     public static getFolder(path: string): FolderI {
@@ -216,7 +215,7 @@ export default class Disks {
         }
         let basePath = path.join(disksFolder, name);
         let map = basePath + '.map';
-        let router = basePath + '.coo';
+        let freeSpaces = basePath + '.coo';
         let container = basePath + '.bin';
         Encryptor.decrypt(fs.readFileSync(map), pass);
         let disksList: string[] = JSON.parse(fs.readFileSync(controllerPath, { encoding: 'utf-8' }));
@@ -226,7 +225,7 @@ export default class Disks {
         fs.writeFileSync(controllerPath, Buffer.from(JSON.stringify(disksList), 'utf-8'));
         disk.container.closeContainer();
         fs.unlinkSync(map);
-        fs.unlinkSync(router);
+        fs.unlinkSync(freeSpaces);
         fs.unlinkSync(container);
     }
     public static async rmFile(path: string): Promise<void> {
@@ -325,14 +324,15 @@ export default class Disks {
             return addressList;
         };
         let disk = Disks.getDiskObj(segments[0]);
-        let errorDisk8 = false;
         let filesAddress = getFilesAddress(Disks.getFolder(path).content);
-        for (let i = 0; i < filesAddress.length; i++) {
-            try {
-                await disk.container.rmContent(filesAddress[i]);
-            } catch (error) {
-                errorDisk8 = true;
-            }
+        let promiseList: Promise<void>[] = [];
+        for (const address of filesAddress) {
+            promiseList.push(disk.container.rmContent(address));
+        }
+        try {
+            await Promise.all(promiseList);
+        } catch (err) {
+            throw errors.disk[8];
         }
         let res = explore(disk.content, segments[level]);
         let out = false;
@@ -348,9 +348,6 @@ export default class Disks {
                 }
             }
         });
-        if (errorDisk8) {
-            throw errors.disk[8];
-        }
         if (!out) {
             throw errors.disk[5];
         }
@@ -366,7 +363,7 @@ export default class Disks {
         }
         let level: number = 1;
         let disk = Disks.getDiskObj(segments[0]);
-        let data = Encryptor.encrypt(Compressor.compress(file.content), disk.key);
+        let data = Encryptor.encrypt(file.content, disk.key);
         let address = await disk.container.addContent(data);
         const fileObj: FileI = {
             type: 'file',

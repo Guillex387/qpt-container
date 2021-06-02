@@ -2,10 +2,9 @@ import { Menu, app, BrowserWindow, ipcMain, dialog } from 'electron';
 import Dialogs from './dialogs';
 import * as path from 'path';
 import Disks from './lib/disk';
-import { handleError, handleErrorAsync } from './errors';
+import { handleError } from './errors';
 import { production, cacheFolder } from './config';
 import * as fs from 'fs';
-import handleWork from './work';
 import { EventEmitter } from 'events';
 let mainEventHandler = new EventEmitter();
 const mainHtml = path.join(__dirname, '..', 'views', 'index.html');
@@ -202,84 +201,72 @@ app.whenReady().then(async () => {
     await Disks.init();
     deployMainWindow();
 });
-ipcMain.on('new-file', async (ev, originPath) => {
-    handleWork(async () => {
-        let files = await Dialogs.openFileDialog();
-        let succesfulyCreated: string[] = [];
-        for (let i = 0; i < files.length; i++) {
-            await handleErrorAsync(async () => {
-                await Disks.addFile(originPath, { name: files[i].name, mimeType: files[i].mimeType, content: files[i].content });
-                succesfulyCreated.push(files[i].name);
-            }, (rolErr, msg) => {
-                Dialogs.openErrorDialog(rolErr, msg);
-            });
-        }
-        ev.returnValue = succesfulyCreated;
-    });
-});
-ipcMain.on('new-folder', async (ev, originPath, name) => {
-    handleWork(() => {
-        handleError(() => {
-            Disks.addFolder(originPath, name);
-            ev.returnValue = true;
+ipcMain.on('new-file', async (ev, originPath: string) => {
+    let files = await Dialogs.openFileDialog();
+    let succesfulyCreated: string[] = [];
+    for (const file of files) {
+        await handleError(async () => {
+            await Disks.addFile(originPath, { name: file.name, mimeType: file.mimeType, content: file.content });
+            succesfulyCreated.push(file.name);
         }, (rolErr, msg) => {
-            ev.returnValue = false;
             Dialogs.openErrorDialog(rolErr, msg);
         });
+    }
+    ev.returnValue = succesfulyCreated;
+});
+ipcMain.on('new-folder', async (ev, originPath: string, name: string) => {
+    await handleError(() => {
+        Disks.addFolder(originPath, name);
+        ev.returnValue = true;
+    }, (rolErr, msg) => {
+        ev.returnValue = false;
+        Dialogs.openErrorDialog(rolErr, msg);
     });
 });
-ipcMain.on('get-file', (ev, filePath) => {
-    handleWork(async () => {
-        await handleErrorAsync(async () => {
-            const { data, mimeType } = await Disks.getFileContent(filePath);
-            ev.returnValue = [Uint8Array.from(data), mimeType];
-        }, (rolErr, msg) => {
-            ev.returnValue = null;
-            Dialogs.openErrorDialog(rolErr, msg);
-        });
+ipcMain.on('get-file', async (ev, filePath: string) => {
+    await handleError(async () => {
+        const { data, mimeType } = await Disks.getFileContent(filePath);
+        ev.returnValue = [Uint8Array.from(data), mimeType];
+    }, (rolErr, msg) => {
+        ev.returnValue = null;
+        Dialogs.openErrorDialog(rolErr, msg);
     });
 });
-ipcMain.on('remove-file', (ev, filePath) => {
-    handleWork(async () => {
-        await handleErrorAsync(async () => {
-            await Disks.rmFile(filePath);
-            ev.returnValue = true;
-        }, (rolErr, msg) => {
-            ev.returnValue = false;
-            Dialogs.openErrorDialog(rolErr, msg);
-        });
+ipcMain.on('remove-file', async (ev, filePath: string) => {
+    await handleError(async () => {
+        await Disks.rmFile(filePath);
+        ev.returnValue = true;
+    }, (rolErr, msg) => {
+        ev.returnValue = false;
+        Dialogs.openErrorDialog(rolErr, msg);
     });
 });
-ipcMain.on('remove-folder', (ev, folderPath) => {
-    handleWork(async () => {
-        await handleErrorAsync(async () => {
-            await Disks.rmFolder(folderPath);
-            ev.returnValue = true;
-        }, (rolErr, msg) => {
-            ev.returnValue = false;
-            Dialogs.openErrorDialog(rolErr, msg);
-        });
+ipcMain.on('remove-folder', async (ev, folderPath: string) => {
+    await handleError(async () => {
+        await Disks.rmFolder(folderPath);
+        ev.returnValue = true;
+    }, (rolErr, msg) => {
+        ev.returnValue = false;
+        Dialogs.openErrorDialog(rolErr, msg);
     });
 });
-ipcMain.on('message-box-confirm', async (ev, msg) => {
+ipcMain.on('message-box-confirm', async (ev, msg: string) => {
     let accepted = await Dialogs.openQuestionDialog(msg);
     ev.returnValue = accepted;
 });
-ipcMain.on('export-file', (ev, file: string) => {
-    handleWork(async () => {
-        let segments = file.split('/');
-        let fileName = segments[segments.length - 1];
-        let selectedPath = await Dialogs.openExportDialog(fileName);
-        if (selectedPath !== undefined) {
-            let savePath: string = selectedPath;
-            await handleErrorAsync(async () => {
-                let { data } = await Disks.getFileContent(file);
-                fs.writeFileSync(savePath, data);
-            }, (rolErr, msg) => {
-                Dialogs.openErrorDialog(rolErr, msg);
-            });
-        }
-    });
+ipcMain.on('export-file', async (ev, file: string) => {
+    let segments = file.split('/');
+    let fileName = segments[segments.length - 1];
+    let selectedPath = await Dialogs.openExportDialog(fileName);
+    if (selectedPath !== undefined) {
+        let savePath: string = selectedPath;
+        await handleError(async () => {
+            let { data } = await Disks.getFileContent(file);
+            fs.writeFileSync(savePath, data);
+        }, (rolErr, msg) => {
+            Dialogs.openErrorDialog(rolErr, msg);
+        });
+    }
 });
 mainEventHandler.on('rm-disk', (delDiskName: string) => {
     mainWindow.webContents.send('rm-disk', delDiskName);
