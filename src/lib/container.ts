@@ -23,12 +23,12 @@ export default class Container {
         }
         return new Container(containerPh, addressPh);
     }
-    private containerPath: string;
-    private freeSpacesPath: string;
+    public containerPath: string;
+    public freeSpacesPath: string;
     private freeSpacesList: string[];
     private fd: number;
-    private addFreeSpace(s: string): void {
-        this.freeSpacesList.push(s);
+    private addFreeSpace(...s: string[]): void {
+        this.freeSpacesList.push(...s);
         this.freeSpacesList.sort((a, b) => {
             let locsA = Container.addressParseStr(a);
             let locsB = Container.addressParseStr(b);
@@ -78,13 +78,17 @@ export default class Container {
         fs.appendFileSync(this.containerPath, content);
         return Container.addressParseLocs(contentlocs);
     }
-    public async rmContent(address: string): Promise<void> {
+    public async rmContent(...addressItems: string[]): Promise<void> {
+        let freeSpaces: string[] = [];
         const bytes = fs.statSync(this.containerPath).size;
-        const locs = Container.addressParseStr(address);
-        if (locs[1] >= bytes) {
-            throw errors.container[2];
+        for (const address of addressItems) {
+            const locs = Container.addressParseStr(address);
+            if (locs[1] >= bytes) {
+                throw errors.container[2];
+            }
+            freeSpaces.push(address);
         }
-        this.addFreeSpace(address);
+        this.addFreeSpace(...freeSpaces);
         this.saveFreeSpaces();
         return;
     }

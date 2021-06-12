@@ -123,7 +123,7 @@ export const loadPreviewer = (fileName: string, blobUrl: string, mimeType: strin
             `;
         } else if (initType === 'audio') {
             component = `
-            <audio controls controlslist="nodownload" style="outline: none;">
+            <audio controls controlslist="nodownload" style="outline: none;background-color: #2e2e2e;">
                 <source src="${blobUrl}" type="${mimeType}">
             </audio>
             `;

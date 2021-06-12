@@ -1,5 +1,5 @@
 import { dialog, BrowserWindow, ipcMain } from 'electron';
-import Disks from './lib/disk';
+import Disks from './disks.controller';
 import * as mime from 'mime-types';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -51,7 +51,7 @@ class Dialogs {
         let code: number = dialog.showMessageBoxSync({
             message: question,
             type: 'question',
-            title: 'QPT container',
+            title: 'qpt-container',
             buttons: ['Yes', 'No']
         });
         return (code == 0);
