@@ -5,7 +5,9 @@ import path from 'path'
 const production = !process.env.ROLLUP_WATCH
 function resetDir() {
     const mapFile = path.join(__dirname, 'app', 'bundle.js.map')
-    fs.unlinkSync(mapFile)
+    try {
+        fs.unlinkSync(mapFile)
+    } catch (error) { }
 }
 production && resetDir()
 export default {
