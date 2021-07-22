@@ -10,7 +10,7 @@ For obtain this the app manage a virtual disk where contains the files, in the a
 - Preview the files
 - Remove folders and files
 
-The app is very friendly and easy to use, you can create the disks you need and manage at the same time.
+The app is very friendly and easy to use, you can create the disks you need and manage at the same time. And is completely secure because all the disk is locked with a password, and all the data will be store locally in your computer and not in the cloud or something like this.
 
 > **Important**
 >
@@ -33,5 +33,5 @@ The app are the developed with [electron](https://www.electronjs.org) and [types
 ### **Features**:
 - *Virtual disk*: the app storage the files and folders into a disk, whose is structured in two parts, the **Map** and the **Container**.
 - *Map*: is a tree that saves the hierarchy of the disk.
-- *Container*: this is divided into two parts, the free spaces list and the list of file content. The free spaces list is some part of the *Container* that are free for storage of a future file in the location. And the list of file content storage the content of the files and some spaces are free, this happens when the user removes some file and the location of her content is free.
+- *Container*: this is divided into two parts, the free spaces list and the list of file content. The free spaces list is some part of the **Container** that are free for storage of a future file in the location. And the list of file content storage the content of the files and some spaces are free, this happens when the user removes some file and the location of its content becomes free.
 - *Encryptor*: this is a algorithm, in this case is [AES-256 CBC](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) used with [crypto](https://nodejs.org/api/crypto.html) , that keep something unreadable for the computer and the user with a password, that the user has to memorize. In the app each disk has a password and with her the **Encryptor** will encrypt the **Map** and the **Container** of the disk, so that without the password it is insurmountable.
