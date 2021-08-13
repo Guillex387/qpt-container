@@ -18,7 +18,7 @@ The app is very friendly and easy to use, you can create the disks you need and 
 
 ## Executables
 
-You can download the zip of the program for [windows](https://github.com/Guillex387/qpt-container/releases/download/1.0.0/qpt-container-win32-x64-v1.0.0.zip) and [linux](https://github.com/Guillex387/qpt-container/releases/download/1.0.0/qpt-container-linux-x64-v1.0.0.zip) **last version**
+You can download the zip of the program for [windows](https://github.com/Guillex387/qpt-container/releases/download/1.0.0/qpt-container-win32-x64-v1.0.0.zip) and [linux](https://github.com/Guillex387/qpt-container/releases/download/1.0.0/qpt-container-linux-x64-v1.0.0.zip) **1.0.0 version**
 
 ## Resources
 
