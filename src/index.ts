@@ -4,7 +4,7 @@ import * as path from 'path';
 import Disks from './disks.controller';
 import { handleError } from './errors';
 import mainEvents from './mainEvents.handler';
-import { production } from './config';
+import { production, appIcon, isLinux } from './config';
 import { EventEmitter } from 'events';
 let windowsEvents = new EventEmitter();
 const mainHtml = path.join(__dirname, '..', 'views', 'index.html');
@@ -156,6 +156,7 @@ function deployMainWindow(): void {
         }
     });
     mainWindow.setMenu(production ? distMenu : devMenu);
+    isLinux && mainWindow.setIcon(appIcon);
     mainWindow.loadFile(mainHtml);
     mainWindow.maximize();
     mainWindow.on('ready-to-show', mainWindow.show);

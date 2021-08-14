@@ -1,4 +1,6 @@
-# qpt-container
+<p align="center">
+  <img src="assets/logo_with_name.png">
+</p>
 
 ## Description and use
 
@@ -18,7 +20,7 @@ The app is very friendly and easy to use, you can create the disks you need and 
 
 ## Executables
 
-You can download the zip of the program for [windows](https://github.com/Guillex387/qpt-container/releases/download/1.0.0/qpt-container-win32-x64-v1.0.0.zip) and [linux](https://github.com/Guillex387/qpt-container/releases/download/1.0.0/qpt-container-linux-x64-v1.0.0.zip) **1.0.0 version**
+You can download the zip of the program for [windows](https://github.com/Guillex387/qpt-container/releases/download/v1.0.1/qpt-container-win32-x64-v1.0.1.zip) and [linux](https://github.com/Guillex387/qpt-container/releases/download/v1.0.1/qpt-container-linux-x64-v1.0.1.zip) **1.0.1 version**
 
 ## Resources
 

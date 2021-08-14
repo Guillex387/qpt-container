@@ -12,7 +12,7 @@ function resetDir() {
 production && resetDir()
 export default {
     input: 'src/index.ts',
-    external: ['fs', 'path', 'electron', 'events', 'zlib', 'crypto', 'mime-types'],
+    external: ['os', 'fs', 'path', 'electron', 'events', 'zlib', 'crypto', 'mime-types'],
     plugins: [
         typescript({ target: 'es6' }),
         production && terser({ compress: true, mangle: true, toplevel: true })

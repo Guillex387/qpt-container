@@ -1,5 +1,6 @@
 import { dialog, BrowserWindow, ipcMain } from 'electron';
 import Disks from './disks.controller';
+import { appIcon, isLinux } from './config';
 import * as mime from 'mime-types';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -81,6 +82,7 @@ class Dialogs {
                     }
                 });
                 loaderWindow.setMenu(null);
+                isLinux && loaderWindow.setIcon(appIcon);
                 loaderWindow.loadFile(loaderHtml);
                 loaderWindow.once('ready-to-show', () => loaderWindow.show());
                 loaderWindow.webContents.once('dom-ready', () => {
@@ -119,6 +121,7 @@ class Dialogs {
                     }
                 });
                 addDiskWindow.setMenu(null);
+                isLinux && addDiskWindow.setIcon(appIcon);
                 addDiskWindow.loadFile(addDiskHtml);
                 addDiskWindow.once('ready-to-show', () => addDiskWindow.show());
                 addDiskWindow.webContents.once('dom-ready', () => {
@@ -156,6 +159,7 @@ class Dialogs {
                     }
                 });
                 removeDiskWindow.setMenu(null);
+                isLinux && removeDiskWindow.setIcon(appIcon);
                 removeDiskWindow.loadFile(removeDiskHtml);
                 removeDiskWindow.once('ready-to-show', () => removeDiskWindow.show());
                 removeDiskWindow.webContents.once('dom-ready', () => {
