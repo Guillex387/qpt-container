@@ -7,8 +7,8 @@
         "start": "electron .",
         "build": "rollup -c",
         "dev": "rollup -c -w",
-        "build-pkg-win32": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=win32 --arch=x64 --icon=assets/logo-win.ico --ignore=data --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=Updates.txt --ignore=.git --ignore=.vscode --ignore=rollup.config.js",
-        "build-pkg-lnx": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=linux --arch=x64 --ignore=data --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=Updates.txt --ignore=.git --ignore=.vscode --ignore=rollup.config.js && node linuxRunner.js && copy assets\\logo.png build\\qpt-container-linux-x64\\logo.png"
+        "build-pkg-win32": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=win32 --arch=x64 --icon=assets/logo-win.ico --ignore=assets --ignore=data --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=.git --ignore=.vscode --ignore=rollup.config.js",
+        "build-pkg-lnx": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=linux --arch=x64 --ignore=assets --ignore=data --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=.git --ignore=.vscode --ignore=rollup.config.js && node linuxRunner.js && copy assets\\logo.png build\\qpt-container-linux-x64\\logo.png"
     },
     "keywords": [],
     "author": "QPT",
@@ -24,6 +24,7 @@
         "electron": "^12.0.2",
         "electron-packager": "^15.2.0",
         "rollup": "^2.50.3",
+        "rollup-plugin-inject-process-env": "^1.3.1",
         "rollup-plugin-terser": "^7.0.2",
         "tslib": "^2.2.0",
         "typescript": "^4.3.2"

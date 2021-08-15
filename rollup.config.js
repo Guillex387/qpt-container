@@ -1,5 +1,6 @@
 import typescript from '@rollup/plugin-typescript'
 import { terser } from 'rollup-plugin-terser'
+import injectEnv from 'rollup-plugin-inject-process-env';
 import fs from 'fs'
 import path from 'path'
 const production = !process.env.ROLLUP_WATCH
@@ -15,6 +16,9 @@ export default {
     external: ['os', 'fs', 'path', 'electron', 'events', 'zlib', 'crypto', 'mime-types'],
     plugins: [
         typescript({ target: 'es6' }),
+        production && injectEnv({
+            ELECTRON_ENV: 'production'
+        }),
         production && terser({ compress: true, mangle: true, toplevel: true })
     ],
     output: {
