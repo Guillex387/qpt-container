@@ -6,59 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Load disk</title>
-    <style>
-        body {
-            background-color: #363636;
-        }
-
-        main {
-            display: grid;
-            grid-template-columns: 1fr 1fr 30px 1fr;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        select,
-        input,
-        button {
-            color: white;
-            background-color: #242424;
-            border: none;
-            font-size: 20px;
-            margin: 5px;
-            padding: 5px 10px;
-            width: auto;
-            outline: none;
-            cursor: pointer;
-        }
-
-        input {
-            cursor: text;
-            border: 2px solid transparent;
-        }
-
-        button:hover {
-            background-color: #303030;
-        }
-
-        button:active {
-            background-color: #2b2b2b;
-        }
-
-        #vsb {
-            margin: auto;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="./css/dialogs.css">
 </head>
 
 <body>
     <main>
         <select id="selected-disk"></select>
         <input type="password" id="password" placeholder="Password" />
-        <img id="vsb" src="./img/visibility_off_white_24dp.svg" style="margin: auto;">
+        <img id="vsb" src="./img/visibility_off_white_24dp.svg">
         <button id="btn1">Load</button>
     </main>
 </body>
@@ -83,7 +38,7 @@
         });
     });
     btn.addEventListener('click', () => {
-        ipcRenderer.sendSync('load-disk', disks.value, password.value);
+        ipcRenderer.sendSync('data', disks.value, password.value);
     });
 </script>
 

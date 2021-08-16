@@ -14,12 +14,17 @@ const errors = {
         new Error('The container already exists'), // code 0
         new Error('The container doesn\'t exists'), // code 1
         new Error('The content address doesn\'t exists'), // code 2
-        new Error('The file that you has added is void') // code 3
+        new Error('The file that you has added is void'), // code 3
+        new Error('Format error') // code 4
     ],
     encrypter: [
         new Error('Incorrect key'), // code 0
         new Error('Invalid key') // code 1
-    ]
+    ],
+    exporter: [
+        new Error('The import file is not a disk'), // code 0
+        new Error('Error exporting the disk') // code 1
+    ],
 }
 export async function handleError(func: () => any, cb: (rolError: string, message: string) => void): Promise<void> {
     try {
@@ -27,28 +32,13 @@ export async function handleError(func: () => any, cb: (rolError: string, messag
     } catch (error) {
         let rolError = 'Unknown';
         let errorCode = -1;
-        for (let i = 0; i < errors.disk.length; i++) {
-            if (error === errors.disk[i]) {
-                rolError = 'Disk';
-                errorCode = i;
-                break;
-            }
-        }
-        if (errorCode !== -1) {
-            for (let i = 0; i < errors.container.length; i++) {
-                if (error === errors.container[i]) {
-                    rolError = 'Container';
+        for (const key in errors) {
+            for (let i = 0; i < errors[key].length; i++) {
+                const err = errors[key][i];
+                if (err === error) {
+                    rolError = key;
+                    rolError = rolError[0].toUpperCase() + rolError.substr(1);
                     errorCode = i;
-                    break;
-                }
-            }
-            if (errorCode !== -1) {
-                for (let i = 0; i < errors.encrypter.length; i++) {
-                    if (error === errors.encrypter[i]) {
-                        rolError = 'Encrypter';
-                        errorCode = i;
-                        break;
-                    }
                 }
             }
         }

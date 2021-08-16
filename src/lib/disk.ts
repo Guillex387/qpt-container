@@ -2,23 +2,24 @@ import Container from './container';
 import * as path from 'path';
 import * as fs from 'fs';
 import { disksFolder } from '../config';
-import Encryptor from './crypter';
+import Encryptor from './encryptor';
 import errors from '../errors';
-interface IFile {
+import { ExportDecoder, ExportCoder } from './exportCodec';
+export interface IFile {
     type: "file";
     name: string;
     mimeType: string;
     content: string;
 }
-interface IFolder {
+export interface IFolder {
     type: "folder";
     name: string;
     content: ITree;
 }
-type ITree = (IFile | IFolder)[];
+export type ITree = (IFile | IFolder)[];
 export default class Disk {
-    private pass: string;
-    private container: Container;
+    public pass: string;
+    public container: Container;
     private mapFilePath: string;
     public name: string;
     public tree: ITree;
@@ -30,6 +31,9 @@ export default class Disk {
         let bin = Buffer.from(treeStr, 'utf-8');
         let encodedData = Encryptor.encrypt(bin, this.pass);
         fs.writeFileSync(this.mapFilePath, encodedData);
+    }
+    public async export(): Promise<Buffer> {
+        return new ExportCoder(this.name, this.tree, this.container, this.pass).encode();
     }
     public async getFileContent(path: string[], tree: ITree = this.tree): Promise<{ data: Buffer, mimeType: string }> {
         let pathCopy = [...path];
@@ -168,9 +172,8 @@ export default class Disk {
         throw errors.disk[3];
     }
     public remove(): void {
-        const pathsToRemove: string[] = [this.container.containerPath, this.container.freeSpacesPath, this.mapFilePath];
-        this.container.closeContainer();
-        pathsToRemove.forEach(path => fs.unlinkSync(path));
+        fs.rmSync(this.mapFilePath);
+        this.container.removeContainer();
     }
     private constructor(name: string, pass: string, tree: ITree, container: Container, mapFilePath: string) {
         this.name = name;
@@ -181,9 +184,9 @@ export default class Disk {
     }
     public static create(name: string, pass: string): Disk {
         const mapFile = path.join(disksFolder, `${name}.map`);
-        let container = Container.create(name);
         let treeEncoded = Encryptor.encrypt(Buffer.from('[]', 'utf-8'), pass);
         fs.writeFileSync(mapFile, treeEncoded);
+        let container = Container.create(name);
         return new Disk(name, pass, [], container, mapFile);
     }
     public static select(name: string, pass: string): Disk {
@@ -193,5 +196,16 @@ export default class Disk {
         let treeDataDecoded = Encryptor.decrypt(treeData, pass).toString('utf-8');
         let tree: ITree = JSON.parse(treeDataDecoded);
         return new Disk(name, pass, tree, container, mapFile);
+    }
+    public static import(name: string, buffer: Buffer, pass: string) {
+        let residualMap = path.join(disksFolder, `${name}.bin`);
+        if (fs.existsSync(residualMap)) fs.rmSync(residualMap);
+        let [tree, contents] = new ExportDecoder(buffer, pass).decode();
+        let basePath = path.join(disksFolder, name);
+        let container = Container.create(name, contents);
+        let bufmap = Buffer.from(JSON.stringify(tree), 'utf-8');
+        let encodedMap = Encryptor.encrypt(bufmap, pass);
+        fs.writeFileSync(basePath + '.map', encodedMap);
+        return new Disk(name, pass, tree, container, basePath + '.map');
     }
 }

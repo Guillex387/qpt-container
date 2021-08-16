@@ -1,150 +1,13 @@
-import { Menu, app, BrowserWindow, ipcMain } from 'electron';
-import Dialogs from './dialogs';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import * as path from 'path';
-import Disks from './disks.controller';
-import { handleError } from './errors';
+import constructMenu from './menu';
 import mainEvents from './mainEvents.handler';
 import { production, appIcon, isLinux } from './config';
 import { EventEmitter } from 'events';
 let windowsEvents = new EventEmitter();
-const mainHtml = path.join(__dirname, '..', 'views', 'index.html');
 let mainWindow: BrowserWindow;
-const devMenu: Menu = Menu.buildFromTemplate([
-    {
-        label: 'Develop',
-        submenu: [
-            {
-                label: 'Debug',
-                accelerator: 'F12',
-                click: () => mainWindow.webContents.openDevTools()
-            }
-        ]
-    },
-    {
-        label: 'Disk',
-        submenu: [
-            {
-                label: 'Load disk',
-                accelerator: 'Ctrl+L',
-                click: () => {
-                    Dialogs.openLoadDiskDialog(mainWindow).then(val => {
-                        if (val) {
-                            const { name, pass } = val;
-                            handleError(() => {
-                                Disks.load(name, pass);
-                                let content = Disks.getDisk(name).tree;
-                                windowsEvents.emit('new-disk', {
-                                    name,
-                                    content
-                                });
-                            }, (rolErr, msg) => {
-                                Dialogs.openErrorDialog(rolErr, msg);
-                            });
-                        }
-                    });
-                }
-            },
-            {
-                label: 'Add disk',
-                accelerator: 'Ctrl+A',
-                click: () => {
-                    Dialogs.openAddDiskDialog(mainWindow).then(val => {
-                        if (val) {
-                            const { name, pass } = val;
-                            handleError(() => {
-                                Disks.createDisk(name, pass);
-                                let content = Disks.getDisk(name).tree;
-                                windowsEvents.emit('new-disk', { name, content });
-                            }, (rolErr, msg) => {
-                                Dialogs.openErrorDialog(rolErr, msg);
-                            });
-                        }
-                    });
-                }
-            },
-            {
-                label: 'Remove disk',
-                accelerator: 'Ctrl+R',
-                click: () => {
-                    Dialogs.openRemoveDiskDialog(mainWindow).then(val => {
-                        if (val) {
-                            const { selected, pass } = val;
-                            handleError(() => {
-                                Disks.rmDisk(selected, pass);
-                                windowsEvents.emit('rm-disk', selected);
-                            }, (rolErr, msg) => {
-                                Dialogs.openErrorDialog(rolErr, msg);
-                            });
-                        }
-                    });
-                }
-            }
-        ]
-    }
-]);
-const distMenu: Menu = Menu.buildFromTemplate([
-    {
-        label: 'Disk',
-        submenu: [
-            {
-                label: 'Load disk',
-                accelerator: 'Ctrl+L',
-                click: () => {
-                    Dialogs.openLoadDiskDialog(mainWindow).then(val => {
-                        if (val) {
-                            const { name, pass } = val;
-                            handleError(() => {
-                                Disks.load(name, pass);
-                                let content = Disks.getDisk(name).tree;
-                                windowsEvents.emit('new-disk', {
-                                    name,
-                                    content
-                                });
-                            }, (rolErr, msg) => {
-                                Dialogs.openErrorDialog(rolErr, msg);
-                            });
-                        }
-                    });
-                }
-            },
-            {
-                label: 'Add disk',
-                accelerator: 'Ctrl+A',
-                click: () => {
-                    Dialogs.openAddDiskDialog(mainWindow).then(val => {
-                        if (val) {
-                            const { name, pass } = val;
-                            handleError(() => {
-                                Disks.createDisk(name, pass);
-                                let content = Disks.getDisk(name).tree;
-                                windowsEvents.emit('new-disk', { name, content });
-                            }, (rolErr, msg) => {
-                                Dialogs.openErrorDialog(rolErr, msg);
-                            });
-                        }
-                    });
-                }
-            },
-            {
-                label: 'Remove disk',
-                accelerator: 'Ctrl+R',
-                click: () => {
-                    Dialogs.openRemoveDiskDialog(mainWindow).then(val => {
-                        if (val) {
-                            const { selected, pass } = val;
-                            handleError(() => {
-                                Disks.rmDisk(selected, pass);
-                                windowsEvents.emit('rm-disk', selected);
-                            }, (rolErr, msg) => {
-                                Dialogs.openErrorDialog(rolErr, msg);
-                            });
-                        }
-                    });
-                }
-            }
-        ]
-    }
-]);
+const mainHtml = path.join(__dirname, '..', 'views', 'index.html');
+
 function deployMainWindow(): void {
     mainWindow = new BrowserWindow({
         show: false,
@@ -155,17 +18,15 @@ function deployMainWindow(): void {
             devTools: !production
         }
     });
-    mainWindow.setMenu(production ? distMenu : devMenu);
+    let menu = constructMenu(windowsEvents, mainWindow);
+    mainWindow.setMenu(menu);
     isLinux && mainWindow.setIcon(appIcon);
     mainWindow.loadFile(mainHtml);
     mainWindow.maximize();
     mainWindow.on('ready-to-show', mainWindow.show);
     mainWindow.on('closed', app.quit);
 }
-app.whenReady().then(async () => {
-    await Disks.init();
-    deployMainWindow();
-});
+app.whenReady().then(deployMainWindow);
 ipcMain.on('new-file', mainEvents.newFile);
 ipcMain.on('new-folder', mainEvents.newFolder);
 ipcMain.on('get-file', mainEvents.getFile);

@@ -1,14 +1,14 @@
 {
     "name": "qpt-container",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "This is a program for encrypt files into virtual disks and protect your data",
     "main": "./app/bundle.js",
     "scripts": {
         "start": "electron .",
         "build": "rollup -c",
         "dev": "rollup -c -w",
-        "build-pkg-win32": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=win32 --arch=x64 --icon=assets/logo-win.ico --ignore=assets --ignore=data --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=.git --ignore=.vscode --ignore=rollup.config.js",
-        "build-pkg-lnx": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=linux --arch=x64 --ignore=assets --ignore=data --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=.git --ignore=.vscode --ignore=rollup.config.js && node linuxRunner.js && copy assets\\logo.png build\\qpt-container-linux-x64\\logo.png"
+        "build-pkg-win32": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=win32 --arch=x64 --icon=assets/logo-win.ico --ignore=assets --ignore=data --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=.git --ignore=.vscode --ignore=rollup.config.js --ignore=linuxRunner.js --ignore=README.md",
+        "build-pkg-lnx": "electron-packager . qpt-container --asar --out=./build --overwrite --platform=linux --arch=x64 --ignore=assets --ignore=data --ignore=src --ignore=.gitignore --ignore=views/ts --ignore=.git --ignore=.vscode --ignore=rollup.config.js --ignore=linuxRunner.js --ignore=README.md && node linuxRunner.js"
     },
     "keywords": [],
     "author": "QPT",

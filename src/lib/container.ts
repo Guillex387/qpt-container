@@ -7,12 +7,12 @@ export default class Container {
         let basePath = path.join(disksFolder, name);
         return [basePath + '.coo', basePath + '.bin'];
     }
-    public static create(name: string): Container {
+    public static create(name: string, defaultContents: Buffer = Buffer.alloc(0)): Container {
         let [addressPh, containerPh] = Container.formatPath(name);
-        if (fs.existsSync(containerPh)) {
+        if (fs.existsSync(containerPh) || fs.existsSync(addressPh)) {
             throw errors.container[0];
         }
-        fs.writeFileSync(containerPh, Buffer.from('', 'ascii'));
+        fs.writeFileSync(containerPh, defaultContents);
         fs.writeFileSync(addressPh, Buffer.from('[]', 'utf-8'));
         return new Container(containerPh, addressPh);
     }
@@ -40,14 +40,14 @@ export default class Container {
     private saveFreeSpaces(): void {
         fs.writeFileSync(this.freeSpacesPath, JSON.stringify(this.freeSpacesList), { encoding: 'utf-8' });
     }
-    private static addressParseStr(str: string): [number, number] {
+    public static addressParseStr(str: string): [number, number] {
         let buf = Buffer.from(str, 'base64');
-        if (buf.length !== 16) throw 'Format error';
+        if (buf.length !== 16) throw errors.container[4];
         let firstByte = Number(buf.readBigUInt64BE(0));
         let lastByte = Number(buf.readBigUInt64BE(8));
         return [firstByte, lastByte];
     }
-    private static addressParseLocs(locs: [number, number]): string {
+    public static addressParseLocs(locs: [number, number]): string {
         let buf = Buffer.alloc(16);
         buf.writeBigUInt64BE(BigInt(locs[0]), 0);
         buf.writeBigUInt64BE(BigInt(locs[1]), 8);
@@ -103,8 +103,10 @@ export default class Container {
         fs.readSync(this.fd, buf, 0, contentSize, locs[0]);
         return buf;
     }
-    public closeContainer(): void {
+    public removeContainer(): void {
         fs.closeSync(this.fd);
+        fs.rmSync(this.containerPath);
+        fs.rmSync(this.freeSpacesPath);
     }
     private constructor(containerPath: string, frspPath: string) {
         this.containerPath = containerPath;
