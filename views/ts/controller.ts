@@ -38,6 +38,7 @@ export function makerKeyPress(ev: KeyboardEvent) {
     let container = element.parentElement;
     switch (ev.key) {
         case 'Enter':
+            if (element.value.includes('"') || element.value.includes('\'')) return;
             let folderPath = `${element.parentElement.parentElement.parentElement.id}/${element.value}`;
             element.removeEventListener('keydown', makerKeyPress);
             container.innerHTML = '';
