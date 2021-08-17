@@ -16,7 +16,7 @@ The app is very friendly and easy to use, you can create the disks you need and 
 
 > **Important**
 >
-> You must load the disk you want in the dropdown menu, for view their content
+> You must load the disk you want in the dropdown menu, for view and edit their content
 
 ## Executables
 
@@ -39,3 +39,12 @@ The app are the developed with [electron](https://www.electronjs.org) and [types
 - **Encryptor**: this is a algorithm, in this case is [AES-256 CBC](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) used with [crypto](https://nodejs.org/api/crypto.html) , that keep something unreadable for the computer and the user with a password, that the user has to memorize. In the app each disk has a password and with her the **Encryptor** will encrypt the **Map** and the **Container** of the disk, so that without the password it is insurmountable.
 - **Export codec**: this is a **format**, implemmented for **export** and **import** a **encrypted disk** in a single file, to send, save, share..., in a safe way.
 The file contains a mark in the begining of this, *--DISK qpt-container--*, for check if the import file isn't a disk, after a 64-bit number which indicates the length of the tree which is in the next location, and the rest of the file are the contents of the files.
+
+## License
+
+<div style="display: flex;">
+  <img width="80" src="assets/open_source.png">
+  <p style="margin-top: auto;margin-bottom: auto;margin-left: 10px;font-size: 20px;">
+    <strong>Open</strong> source software
+  </p>
+</div>
