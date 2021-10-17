@@ -45,4 +45,4 @@ The file contains a mark in the begining of this, *--DISK qpt-container--*, for 
 
 qpt-container Copyright (c) 2021 Guillex387. All rights reserved.
 
-Licensed under the [GNU GPLv3](https://raw.githubusercontent.com/Guillex387/qpt-container/master/COPYING) license.
+Licensed under the [GNU GPLv3](https://github.com/Guillex387/qpt-container/blob/master/COPYING) license.
