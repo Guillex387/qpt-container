@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo_with_name.png">
+  <img src="https://raw.githubusercontent.com/Guillex387/qpt-container/master/assets/logo_with_name.png">
 </p>
 
 ## Description and use
@@ -43,9 +43,6 @@ The file contains a mark in the begining of this, *--DISK qpt-container--*, for 
 
 ## License
 
-<div style="display: flex;">
-  <img width="80" src="assets/open_source.png">
-  <p style="margin-top: auto;margin-bottom: auto;margin-left: 10px;font-size: 20px;">
-    <strong>Open</strong> source software
-  </p>
-</div>
+qpt-container Copyright (c) 2021 Guillex387. All rights reserved.
+
+Licensed under the [GNU GPLv3](https://raw.githubusercontent.com/Guillex387/qpt-container/master/COPYING) license.
