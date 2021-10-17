@@ -12,7 +12,7 @@
     },
     "keywords": [],
     "author": "QPT",
-    "license": "ISC",
+    "license": "GNU GPLv3",
     "dependencies": {
         "mime-types": "^2.1.28"
     },
