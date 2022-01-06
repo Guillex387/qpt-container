@@ -2,6 +2,8 @@
   <img src="https://raw.githubusercontent.com/Guillex387/qpt-container/master/assets/logo_with_name.png">
 </p>
 
+# !!! Important: this branch of the project is currently in development, and It is not ready for using it !!!
+
 ## Description and use
 
 This is a desktop app for encrypting and storage your data in a safe way.
@@ -21,17 +23,17 @@ The app is very friendly and easy to use, you can create the disks that you need
 
 ## Executables
 
-You can download the program for [windows](https://github.com/Guillex387/qpt-container/releases/download/v1.1.0/setup-v1.1.0.exe) and [linux](https://github.com/Guillex387/qpt-container/releases/download/v1.1.0/qpt-container-linux-x64-v1.1.0.zip) **1.1.0 version**
+You can download the program for [windows](https://github.com/Guillex387/qpt-container/releases/download/v1.1.0/setup-v1.1.0.exe) and [linux](https://github.com/Guillex387/qpt-container/releases/download/v1.1.0/qpt-container-linux-x64-v1.1.0.zip) **1.1.0 version**.
 
 ## Resources
 
-The icons of the app are provided by [flaticon](https://www.flaticon.com/) and [icons8](https://icons8.com/)
+The icons of the app are provided by [Font Awesome](https://fontawesome.com), under the [CC BY 4.0 License](https://creativecommons.org/licenses/by/4.0/).
 
 ## Development
 
 > This part of the readme is for technical details.
 
-The app are the developed with [electron](https://www.electronjs.org) and [typescript](https://www.typescriptlang.org), and I use [rollup](https://rollupjs.org/) with [terser](https://www.npmjs.com/package/terser) for package the app into a single vanillaJS file, and the windows with html, css and typescript.
+The app are the developed with [electron](https://www.electronjs.org), [typescript](https://www.typescriptlang.org) and [svelte].
 
 ### **Features**:
 - **Virtual disk**: the app storage files and folders into a disk, whose is structured in two parts, the **Map** and the **Container**.

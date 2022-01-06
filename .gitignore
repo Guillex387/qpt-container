@@ -1,7 +1,6 @@
-node_modules
-views/js
-Updates.txt
-app
-data
-build
+/node_modules/
+/core/build/
+/.vscode/
+.DS_Store
+/bin/
 package-lock.json
