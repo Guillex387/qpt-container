@@ -20,7 +20,7 @@ production && deleteSourceMaps();
 export default {
 	input: 'src/main.ts',
 	output: {
-		sourcemap: true,
+		sourcemap: !production,
 		format: 'cjs',
 		name: 'app',
 		file: 'core/build/bundle.js'

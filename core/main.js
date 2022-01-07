@@ -1,8 +1,14 @@
 const { BrowserWindow, app, Menu } = require('electron');
+const { platform } = require('os');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
+const appFolder = path.join(app.getPath('exe'), '..');
 const mainHtml = path.join(__dirname, 'index.html');
+const appIcon = isDev ?
+  path.join(__dirname, '..', 'assets', 'logo.png')
+  :
+  path.join(appFolder, 'logo.png');
 const mainMenu = isDev ?
   Menu.buildFromTemplate([
     {
@@ -29,6 +35,7 @@ function deployWindow(html, menu = null) {
       devTools: isDev
     }
   });
+  (platform() === 'linux') && window.setIcon(appIcon);
   window.setMenu(menu);
   window.loadFile(html);
   window.maximize();

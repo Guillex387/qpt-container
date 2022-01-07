@@ -2,12 +2,18 @@ const packager = require('electron-packager');
 const path = require('path');
 const fs = require('fs');
 
+const defaultArchs = ['ia32', 'x64', 'arm64'];
+const defaultPlatforms = ['win32', 'linux'];
+let args = process.argv.slice(2);
+let target = (args.length === 1) ? args[0].split('-') : null;
+let [targetPlatform, targetArch] = target || [null, null];
+
 let packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json')));
 
 packager({
   appVersion: packageJson.version,
   appCopyright: 'qpt-container Copyright (c) 2021 Guillex387. All rights reserved.',
-  arch: ['ia32', 'x64', 'arm64'],
+  arch: targetArch || defaultArchs,
   asar: true,
   buildVersion: packageJson.version,
   dir: __dirname,
@@ -16,7 +22,7 @@ packager({
   name: packageJson.name,
   out: path.join(__dirname, 'bin'),
   overwrite: true,
-  platform: ['win32', 'linux'],
+  platform: targetPlatform || defaultPlatforms,
 })
   .then(artifacts => {
     console.log('Artifacts:');
