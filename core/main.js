@@ -2,6 +2,7 @@ const { BrowserWindow, app, Menu } = require('electron');
 const { platform } = require('os');
 const path = require('path');
 const isDev = require('electron-is-dev');
+const open = require('open');
 
 const appFolder = path.join(app.getPath('exe'), '..');
 const mainHtml = path.join(__dirname, 'index.html');
@@ -40,6 +41,10 @@ function deployWindow(html, menu = null) {
   window.loadFile(html);
   window.maximize();
   window.on('ready-to-show', window.show);
+  window.webContents.on('will-navigate', (e, url) => {
+    e.preventDefault();
+    open(url);
+  });
   window.on('closed', app.quit);
 }
 

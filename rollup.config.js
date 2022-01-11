@@ -12,7 +12,9 @@ import path from 'path';
 const production = !process.env.ROLLUP_WATCH;
 const deleteSourceMaps = () => {
 	let target = path.join(__dirname, 'core', 'build', 'bundle.js.map');
-	fs.unlinkSync(target);
+	try {
+		fs.unlinkSync(target);
+	} catch (e) { }
 }
 
 production && deleteSourceMaps();
@@ -27,7 +29,10 @@ export default {
 	},
 	plugins: [
 		svelte({
-			preprocess: sveltePreprocess({ sourceMap: !production }),
+			preprocess: sveltePreprocess({
+				sourceMap: !production,
+				postcss: true
+			}),
 			compilerOptions: {
 				dev: !production
 			}

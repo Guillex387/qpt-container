@@ -1,8 +1,26 @@
-<h1>Hello qpt-container <em>2.0.0</em>!</h1>
+<script lang="ts">
+  import Home from './pages/Home.svelte';
+  import Tailwind from './Tailwind.svelte';
+</script>
 
-<style>
-  h1 {
-    font-family: sans-serif;
-    text-align: center;
+<main id="root">
+  <Home />
+</main>
+
+<style global>
+  #root {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    color: #b2b2b2;
+    background: #2f3437;
+  }
+
+  .icon-hover {
+    transition-duration: 300ms;
+  }
+  .icon-hover:hover {
+    background: #ffffff1a;
+    color: white;
   }
 </style>
