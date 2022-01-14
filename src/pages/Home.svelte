@@ -6,7 +6,7 @@
   import FileImportSolid from '../icons/file-import-solid.svelte';
   import PlusCircleSolid from '../icons/plus-circle-solid.svelte';
   import RedoAltSolid from '../icons/redo-alt-solid.svelte';
-  import DiskComponent from '../components/DiskComponent.svelte';
+  import DiskList from '../components/DiskList.svelte';
 </script>
 
 <main>
@@ -28,8 +28,8 @@
     </div>
   </header>
   <article class="flex justify-center px-20 pt-10">
-    <div class="max-w-6xl">
-      <div class="flex h-12">
+    <div class="w-9/12" id="content">
+      <div class="flex h-12" id="top-menu">
         <div class="flex-none w-12 icon-hover rounded-lg">
           <Center>
             <IconBtn>
@@ -53,9 +53,7 @@
         </div>
       </div>
       <hr />
-      <div class="mt-5 px-16">
-        <DiskComponent name="Disk_Example" />
-      </div>
+      <DiskList disks={[]} />
     </div>
   </article>
 </main>
@@ -69,5 +67,9 @@
     height: 1px;
     background: #4d4d4d;
     border: none;
+  }
+
+  #content {
+    min-width: 20rem;
   }
 </style>

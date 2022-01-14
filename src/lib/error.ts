@@ -1,4 +1,10 @@
-const errorMsgs: string[] = ['Incorrect key', 'Invalid key'];
+const errorMsgs: string[] = [
+  'Incorrect key',
+  'Invalid key',
+  "Disk doesn't exists",
+  'Error reading the disk',
+  'Error modifying the disk',
+];
 
 class Error {
   public code: number;
