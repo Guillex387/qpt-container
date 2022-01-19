@@ -10,6 +10,7 @@ class AES {
     let formatKey = remaining + symKey;
     return Buffer.from(formatKey, 'utf-8');
   }
+
   public static verifyPassFormat(pass: string): boolean {
     if (pass.length > 32) {
       return false;
@@ -23,6 +24,7 @@ class AES {
     let cipher = crypto.createCipheriv('aes-256-cbc', symKey, iv);
     return Buffer.concat([iv, cipher.update(buff), cipher.final()]);
   }
+
   public static decrypt(bufEnc: Buffer, pass: string): Buffer {
     const symKey = AES.formatSymKey(pass);
     const iv = bufEnc.slice(0, 16);

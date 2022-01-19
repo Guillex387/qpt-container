@@ -1,9 +1,10 @@
 const errorMsgs: string[] = [
   'Incorrect key',
   'Invalid key',
-  "Disk doesn't exists",
+  "The disk doesn't exists",
   'Error reading the disk',
-  'Error modifying the disk',
+  'Error writing the disk',
+  'Error creating the disk',
 ];
 
 class Error {

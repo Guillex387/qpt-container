@@ -18,7 +18,7 @@
         </IconBtn>
       </Center>
     </div>
-    <p class="w-full text-center">Your disks</p>
+    <p class="w-full text-center">qpt-container</p>
     <div class="flex-none w-12 h-full icon-hover rounded-b-lg">
       <Center>
         <IconBtn>
@@ -53,7 +53,7 @@
         </div>
       </div>
       <hr />
-      <DiskList disks={[]} />
+      <!-- <DiskList disks={[]} /> -->
     </div>
   </article>
 </main>
