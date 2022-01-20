@@ -19,40 +19,44 @@ const deleteSourceMaps = () => {
 
 production && deleteSourceMaps();
 
-export default {
-	input: 'src/main.ts',
-	output: {
-		sourcemap: !production,
-		format: 'cjs',
-		name: 'app',
-		file: 'core/build/bundle.js'
-	},
-	plugins: [
-		svelte({
-			preprocess: sveltePreprocess({
-				sourceMap: !production,
-				postcss: true
+export default cliArgs => {
+	let portableVersion = cliArgs.portable || false;
+	return {
+		input: 'src/main.ts',
+		output: {
+			sourcemap: !production,
+			format: 'cjs',
+			name: 'app',
+			file: 'core/build/bundle.js'
+		},
+		plugins: [
+			svelte({
+				preprocess: sveltePreprocess({
+					sourceMap: !production,
+					postcss: true
+				}),
+				compilerOptions: {
+					dev: !production
+				}
 			}),
-			compilerOptions: {
-				dev: !production
-			}
-		}),
-		css({ output: 'bundle.css' }),
-		typescript({
-			sourceMap: !production,
-			inlineSources: !production
-		}),
-		resolve({
-			browser: false,
-			dedupe: ['svelte']
-		}),
-		commonjs(),
-		injectEnv({
-			PRODUCTION: production.toString()
-		}),
-		production && terser()
-	],
-	watch: {
-		clearScreen: false
+			css({ output: 'bundle.css' }),
+			typescript({
+				sourceMap: !production,
+				inlineSources: !production
+			}),
+			resolve({
+				browser: false,
+				dedupe: ['svelte']
+			}),
+			commonjs(),
+			injectEnv({
+				PRODUCTION: production.toString(),
+				PORTABLE: portableVersion.toString()
+			}),
+			production && terser()
+		],
+		watch: {
+			clearScreen: false
+		}
 	}
 };

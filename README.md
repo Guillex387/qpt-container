@@ -33,18 +33,19 @@ The icons of the app are provided by [Font Awesome](https://fontawesome.com), un
 
 > This part of the readme is for technical details.
 
-The app are the developed with [electron](https://www.electronjs.org), [typescript](https://www.typescriptlang.org) and [svelte].
+The app are the developed with [electron](https://www.electronjs.org), [typescript](https://www.typescriptlang.org), [svelte](https://svelte.dev) and [tailwindCss](https://tailwindcss.com).
 
 ### **Features**:
+
 - **Virtual disk**: the app storage files and folders into a disk, whose is structured in two parts, the **Map** and the **Container**.
 - **Map**: is a tree that saves the hierarchy of the disk.
 - **Container**: this is divided into two parts, the free spaces list and the list of file content. A free space is some part of the **Container** that are free, for storage a future file there. And the list of file content storage the content of the files and some spaces are free, this happens when the user removes some file and the location of its content becomes free.
 - **Encryptor**: this is a algorithm, in this case is [AES-256 CBC](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) used with [crypto](https://nodejs.org/api/crypto.html), for lock data with a password, without her the data is unreadable. In the app each disk has a password and with her the **Encryptor** will encrypt the **Map** and the **Container** of the disk.
 - **Export codec**: this is a **format**, implemmented for **export** and **import** a **encrypted disk** in a single file, to send, save, share..., in a safe way.
-The file contains a mark in the begining of this, *--DISK qpt-container--*, for check if the import file isn't a disk, after a 64-bit number which indicates the length of the tree which is in the next location, and the rest of the file are the contents of the files.
+  The file contains a mark in the begining of this, _--DISK qpt-container--_, for check if the import file isn't a disk, after a 64-bit number which indicates the length of the tree which is in the next location, and the rest of the file are the contents of the files.
 
 ## License
 
-qpt-container Copyright (c) 2021 Guillex387. All rights reserved.
+qpt-container Copyright (c) 2022 Guillex387. All rights reserved.
 
 Licensed under the [GNU GPLv3](https://github.com/Guillex387/qpt-container/blob/master/COPYING) license.

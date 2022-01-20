@@ -1,10 +1,29 @@
 <script lang="ts">
-  import Home from './pages/Home.svelte';
+  import { page } from './globalState';
   import Tailwind from './Tailwind.svelte';
+  import Home from './pages/Home.svelte';
+  import License from './pages/License.svelte';
+  import { fade, fly } from 'svelte/transition';
+
+  let renderPage: string = 'home';
+
+  page.subscribe(value => {
+    renderPage = value;
+  });
 </script>
 
 <main id="root">
-  <Home />
+  {#if renderPage === 'home'}
+    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+      <Home />
+    </div>
+  {:else if renderPage === 'license'}
+    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+      <License />
+    </div>
+  {:else}
+    <Home />
+  {/if}
 </main>
 
 <style global>
@@ -16,10 +35,11 @@
     background: #2f3437;
   }
 
-  .icon-hover {
+  .hover-effect {
+    cursor: pointer;
     transition-duration: 300ms;
   }
-  .icon-hover:hover {
+  .hover-effect:hover {
     background: #ffffff1a;
     color: white;
   }
