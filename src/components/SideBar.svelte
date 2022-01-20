@@ -2,6 +2,9 @@
   import { fly, fade } from 'svelte/transition';
   import { createEventDispatcher } from 'svelte';
   import { page } from '../globalState';
+  import Center from './Center.svelte';
+  import IconBtn from './IconBtn.svelte';
+  import BarsSolid from '../icons/bars-solid.svelte';
 
   let dispatcher = createEventDispatcher();
 
@@ -17,17 +20,30 @@
 </script>
 
 {#if visible}
-  <div transition:fly={{ x: -200, duration: 300 }} id="container" class="fixed h-screen top-0 left-0 rounded-r-lg z-50">
+  <div
+    transition:fly={{ x: -200, duration: 300 }}
+    id="container"
+    class="fixed h-screen top-0 left-0 rounded-r-lg z-20 flex flex-col"
+  >
+    <div class="flex-none flex items-center h-12 rounded-b-lg">
+      <div on:click={emitHide} class="flex-none w-12 h-full hover-effect rounded-lg">
+        <Center>
+          <IconBtn>
+            <BarsSolid />
+          </IconBtn>
+        </Center>
+      </div>
+    </div>
     <ul class="flex flex-col h-full">
-      <li on:click={() => navigate('home')} class="p-5 w-72 mt-5 hover-effect">Home</li>
-      <li on:click={() => navigate('config')} class="p-5 w-72 mt-5 hover-effect">Settings</li>
-      <li on:click={() => navigate('license')} class="p-5 w-72 mt-auto mb-5 hover-effect">License & Copyright</li>
+      <li on:click={() => navigate('home')} class="p-5 w-72 my-2 hover-effect rounded-lg">Home</li>
+      <li on:click={() => navigate('config')} class="p-5 w-72 my-2 hover-effect rounded-lg">Settings</li>
+      <li on:click={() => navigate('license')} class="p-5 w-72 mt-auto mb-2 hover-effect rounded-lg">License & Copyright</li>
     </ul>
   </div>
   <div
     on:click={emitHide}
     transition:fade={{ duration: 300 }}
-    class="fixed h-screen w-screen top-0 left-0 z-40 bg-black opacity-50"
+    class="fixed h-screen w-screen top-0 left-0 z-10 bg-black opacity-50"
   />
 {/if}
 

@@ -9,11 +9,11 @@ const errorMsgs: string[] = [
 
 class Error {
   public code: number;
-  public msg: string;
+  public message: string;
   constructor(code: number) {
     this.code = code;
-    if (code >= errorMsgs.length) this.msg = 'Unknow error';
-    else this.msg = errorMsgs[code];
+    if (code >= errorMsgs.length) this.message = 'Unknow error';
+    else this.message = errorMsgs[code];
   }
 }
 

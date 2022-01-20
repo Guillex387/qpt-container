@@ -30,7 +30,7 @@
       <h1 class="text-xl text-center font-bold p-4">GNU General Public License v3.0</h1>
       <p>
         Qpt-container is licensed under the <a
-          class="text-sky-600 hover:underline"
+          class="text-sky-500 hover:underline"
           href="https://github.com/Guillex387/qpt-container/blob/master/COPYING">GPL-3.0 License</a
         >. Permissions of this strong copyleft license are conditioned on making available complete source code of licensed works
         and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices

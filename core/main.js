@@ -1,4 +1,4 @@
-const { BrowserWindow, app, Menu } = require('electron');
+const { BrowserWindow, app, Menu, dialog } = require('electron');
 const { platform } = require('os');
 const path = require('path');
 const isDev = require('electron-is-dev');
@@ -61,3 +61,5 @@ app.whenReady()
     console.log(reason);
     app.quit();
   });
+
+// TODO: capturate the events of the main process, follow this docs: https://www.electronjs.org/es/docs/latest/api/ipc-main
