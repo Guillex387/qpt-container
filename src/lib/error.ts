@@ -5,6 +5,8 @@ const errorMsgs: string[] = [
   'Error reading the disk',
   'Error writing the disk',
   'Error creating the disk',
+  "Error, the element doesn't exists",
+  'Error, the element already exists',
 ];
 
 class Error {
