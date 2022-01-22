@@ -1,6 +1,8 @@
-import Disk from './disk';
+import Disk, { createDisk } from './disk';
 import Error from '../error';
 import AES from '../aes';
+
+const DEFAULT_BLOCK_DATA_SIZE = 4000;
 
 export interface FileNodeI {
   type: 'file';
@@ -17,7 +19,24 @@ export interface FolderNodeI {
 
 export type FolderContent = (FileNodeI | FolderNodeI)[];
 
+export function createDiskFileSystem(
+  name: string,
+  file: string,
+  pass: string,
+  blockDataSize: number = DEFAULT_BLOCK_DATA_SIZE
+): DiskFileSystem {
+  let disk = createDisk(file, blockDataSize);
+  let initalData = Buffer.from(JSON.stringify([]), 'utf-8');
+  let encryptedData = AES.encrypt(initalData, pass);
+  disk.writeData(encryptedData, {
+    initBlock: disk.RESERVED_BLOCK,
+  });
+  disk.removeInstance();
+  return new DiskFileSystem(file, pass, name);
+}
+
 class DiskFileSystem {
+  public name: string;
   private pass: string;
   private internalDisk: Disk;
 
@@ -185,9 +204,10 @@ class DiskFileSystem {
     }
   }
 
-  constructor(file: string, pass: string) {
+  constructor(file: string, pass: string, name: string) {
     this.internalDisk = new Disk(file);
     this.pass = pass;
+    this.name = name;
   }
 }
 

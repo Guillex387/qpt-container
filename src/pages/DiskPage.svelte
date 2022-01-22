@@ -1,19 +1,14 @@
 <script lang="ts">
   import IconBtn from '../components/IconBtn.svelte';
   import Center from '../components/Center.svelte';
-  import BarsSolid from '../icons/bars-solid.svelte';
   import FileImportSolid from '../icons/file-import-solid.svelte';
-  import PlusCircleSolid from '../icons/plus-circle-solid.svelte';
+  import FileMedicalSolid from '../icons/file-medical-solid.svelte';
+  import FolderPlusSolid from '../icons/folder-plus-solid.svelte';
   import RedoAltSolid from '../icons/redo-alt-solid.svelte';
-  import SideBar from '../components/SideBar.svelte';
+  import ArrowLeftSolid from '../icons/arrow-left-solid.svelte';
   import DropDown from '../components/DropDown.svelte';
   import MenuItem from '../components/MenuItem.svelte';
-  import DiskList from '../components/DiskList.svelte';
-  import { reloadDisksData } from '../controllers/disksManager';
-
-  let visibleSideBar = false;
-  const showSideBar = () => (visibleSideBar = true);
-  const hideSideBar = () => (visibleSideBar = false);
+  import DiskNav from '../components/DiskNav.svelte';
 
   let visibleMenu = false;
   const showMenu = () => (visibleMenu = true);
@@ -22,14 +17,14 @@
 
 <main class="fixed h-full w-full">
   <header class="flex items-center h-12 rounded-b-lg">
-    <div on:click={showSideBar} class="flex-none w-12 h-full hover-effect rounded-lg">
+    <div class="flex-none w-12 h-full hover-effect rounded-lg">
       <Center>
         <IconBtn>
-          <BarsSolid />
+          <ArrowLeftSolid />
         </IconBtn>
       </Center>
     </div>
-    <p class="w-full text-center">Home</p>
+    <!-- TODO: <DiskNav /> -->
     <div class="flex-none w-12 h-full">
       <DropDown visible={visibleMenu} on:show={showMenu} on:hide={hideMenu}>
         <MenuItem on:click={hideMenu} text="Option 1" />
@@ -53,12 +48,19 @@
         </div>
         <div class="flex-none w-12 hover-effect rounded-lg">
           <Center>
-            <IconBtn>
-              <PlusCircleSolid />
+            <IconBtn width={'1rem'}>
+              <FileMedicalSolid />
             </IconBtn>
           </Center>
         </div>
-        <div on:click={reloadDisksData} class="ml-auto flex-none w-12 hover-effect rounded-lg">
+        <div class="flex-none w-12 hover-effect rounded-lg">
+          <Center>
+            <IconBtn>
+              <FolderPlusSolid />
+            </IconBtn>
+          </Center>
+        </div>
+        <div class="ml-auto flex-none w-12 hover-effect rounded-lg">
           <Center>
             <IconBtn>
               <RedoAltSolid />
@@ -66,10 +68,9 @@
           </Center>
         </div>
       </div>
-      <DiskList />
+      <!-- TODO: file system list -->
     </div>
   </article>
-  <SideBar on:hide={hideSideBar} visible={visibleSideBar} />
 </main>
 
 <style>

@@ -3,6 +3,7 @@
   import Tailwind from './Tailwind.svelte';
   import Home from './pages/Home.svelte';
   import License from './pages/License.svelte';
+  import DiskPage from './pages/DiskPage.svelte';
   import { fade, fly } from 'svelte/transition';
 
   let renderPage: string = 'home';
@@ -20,6 +21,10 @@
   {:else if renderPage === 'license'}
     <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
       <License />
+    </div>
+  {:else if renderPage === 'disk'}
+    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+      <DiskPage />
     </div>
   {:else}
     <Home />

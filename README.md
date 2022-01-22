@@ -14,12 +14,9 @@ For obtain this the app manage a virtual disk which contain the files and folder
 - Preview the files
 - Remove folders and files
 - Export and import disks
+- Edit files
 
-The app is very friendly and easy to use, you can create the disks that you need and manage at the same time. And is completely secure, because all the disk is locked with a password, and all the data will be stored locally in your computer, and not in the cloud or something like this.
-
-> **Important**
->
-> You must load the disk that you want in the dropdown menu, for view and edit their content
+The app is very friendly and easy to use, you can create the disks that you need. And is completely secure, because all the disk is encrypted with a password, and all the data will be stored locally in your computer, and not in the cloud or something like this.
 
 ## Executables
 
@@ -31,18 +28,7 @@ The icons of the app are provided by [Font Awesome](https://fontawesome.com), un
 
 ## Development
 
-> This part of the readme is for technical details.
-
 The app are the developed with [electron](https://www.electronjs.org), [typescript](https://www.typescriptlang.org), [svelte](https://svelte.dev) and [tailwindCss](https://tailwindcss.com).
-
-### **Features**:
-
-- **Virtual disk**: the app storage files and folders into a disk, whose is structured in two parts, the **Map** and the **Container**.
-- **Map**: is a tree that saves the hierarchy of the disk.
-- **Container**: this is divided into two parts, the free spaces list and the list of file content. A free space is some part of the **Container** that are free, for storage a future file there. And the list of file content storage the content of the files and some spaces are free, this happens when the user removes some file and the location of its content becomes free.
-- **Encryptor**: this is a algorithm, in this case is [AES-256 CBC](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) used with [crypto](https://nodejs.org/api/crypto.html), for lock data with a password, without her the data is unreadable. In the app each disk has a password and with her the **Encryptor** will encrypt the **Map** and the **Container** of the disk.
-- **Export codec**: this is a **format**, implemmented for **export** and **import** a **encrypted disk** in a single file, to send, save, share..., in a safe way.
-  The file contains a mark in the begining of this, _--DISK qpt-container--_, for check if the import file isn't a disk, after a 64-bit number which indicates the length of the tree which is in the next location, and the rest of the file are the contents of the files.
 
 ## License
 
