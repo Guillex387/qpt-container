@@ -1,4 +1,4 @@
-const { BrowserWindow, app, Menu, dialog } = require('electron');
+const { BrowserWindow, app, Menu, dialog, ipcMain } = require('electron');
 const { platform } = require('os');
 const path = require('path');
 const isDev = require('electron-is-dev');
@@ -62,4 +62,12 @@ app.whenReady()
     app.quit();
   });
 
-// TODO: capturate the events of the main process, follow this docs: https://www.electronjs.org/es/docs/latest/api/ipc-main
+ipcMain.on('error-box', (e, code, message) => {
+  dialog.showErrorBox(`Error ${code}`, message);
+});
+ipcMain.on('open-box', (e, options) => {
+  e.returnValue = dialog.showOpenDialogSync(options);
+});
+ipcMain.on('save-box', (e, options) => {
+  e.returnValue = dialog.showSaveDialogSync(options);
+});
