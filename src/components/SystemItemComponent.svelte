@@ -6,26 +6,26 @@
   import IconBtn from './IconBtn.svelte';
   import DropDown from './DropDown.svelte';
   import MenuItem from './MenuItem.svelte';
+  import { FileNodeI, FolderNodeI } from '../lib/disk/diskFileSystem';
 
   let dispatcher = createEventDispatcher();
 
   function openItem() {
-    dispatcher('open', { name, type });
+    dispatcher('open', { value: obj });
   }
 
   let visibleMenu = false;
   const showMenu = () => (visibleMenu = true);
   const hideMenu = () => (visibleMenu = false);
 
-  export let name: string;
-  export let type: 'file' | 'folder';
+  export let obj: FileNodeI | FolderNodeI;
 </script>
 
 <div class="m-5 flex items-center h-12 rounded-lg" id="container">
   <div class="flex-none w-12 h-full">
     <Center>
       <IconBtn pointer={false}>
-        {#if type === 'file'}
+        {#if obj.type === 'file'}
           <FileSolid />
         {:else}
           <FolderSolid />
@@ -33,7 +33,7 @@
       </IconBtn>
     </Center>
   </div>
-  <p on:dblclick={openItem} class="w-full text-left truncate text-white cursor-pointer select-none">{name}</p>
+  <p on:dblclick={openItem} class="w-full text-left truncate text-white cursor-pointer select-none">{obj.name}</p>
   <div class="flex-none w-12 h-full icon-hover rounded-lg">
     <DropDown visible={visibleMenu} on:show={showMenu} on:hide={hideMenu}>
       <MenuItem on:click={hideMenu} text="Option 1" />

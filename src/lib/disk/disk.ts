@@ -263,7 +263,6 @@ class Disk {
 
   public removeInstance() {
     fs.closeSync(this.fd);
-    this.fd = -1;
   }
 
   constructor(file: string) {

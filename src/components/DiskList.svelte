@@ -9,16 +9,17 @@
 
   let unsubscribe = disks.subscribe(value => (disksState = value));
 
-  function onOpen(disk: string) {
+  const onOpen = (disk: string) => {
     console.log(disksState[disk]);
-  }
+  };
 
   onDestroy(unsubscribe);
 </script>
 
-<div id="container" class="px-16 pb-16 max-h-full overflow-auto">
+<div id="container" class="px-16 pb-16 overflow-auto">
   {#if disksState === null}
     <div>Loading...</div>
+    <!-- TODO: add loader -->
   {:else}
     {#each diskList as diskName}
       <DiskComponent on:open={() => onOpen(diskName)} name={diskName} />

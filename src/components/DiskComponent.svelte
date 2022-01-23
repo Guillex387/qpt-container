@@ -35,6 +35,7 @@
       <MenuItem on:click={hideMenu} text="Option 3" />
       <MenuItem on:click={hideMenu} text="Option 4" />
       <MenuItem on:click={hideMenu} text="Option 5" />
+      <!-- TODO: edit menu item -->
     </DropDown>
   </div>
 </div>

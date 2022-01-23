@@ -1,5 +1,5 @@
 import Error from '../lib/error';
-import { ipcRenderer } from 'electron';
+const { ipcRenderer } = require('electron');
 
 export interface FileFilter {
   name: string;

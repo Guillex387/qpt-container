@@ -9,6 +9,7 @@
   import DropDown from '../components/DropDown.svelte';
   import MenuItem from '../components/MenuItem.svelte';
   import DiskNav from '../components/DiskNav.svelte';
+  import SystemItemList from '../components/SystemItemList.svelte';
 
   let visibleMenu = false;
   const showMenu = () => (visibleMenu = true);
@@ -68,7 +69,7 @@
           </Center>
         </div>
       </div>
-      <!-- TODO: file system list -->
+      <!-- TODO: <SystemItemList /> -->
     </div>
   </article>
 </main>
