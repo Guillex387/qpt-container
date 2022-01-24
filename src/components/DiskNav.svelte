@@ -30,7 +30,7 @@
     <p on:click={() => navigate('')} class="inline select-none whitespace-nowrap cursor-pointer hover:text-white hover:underline">
       {diskName}:
     </p>
-    {#each path as node}
+    {#each path ?? [] as node}
       <p class="inline select-none">/</p>
       <p
         on:click={() => navigate(node)}

@@ -4,6 +4,7 @@
   import Home from './pages/Home.svelte';
   import License from './pages/License.svelte';
   import DiskPage from './pages/DiskPage.svelte';
+  import Settings from './pages/Settings.svelte';
   import { fade, fly } from 'svelte/transition';
 
   let renderPage: string = 'home';
@@ -18,13 +19,17 @@
     <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
       <Home />
     </div>
-  {:else if renderPage === 'license'}
-    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
-      <License />
-    </div>
   {:else if renderPage === 'disk'}
     <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
       <DiskPage />
+    </div>
+  {:else if renderPage === 'settings'}
+    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+      <Settings />
+    </div>
+  {:else if renderPage === 'license'}
+    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+      <License />
     </div>
   {:else}
     <Home />

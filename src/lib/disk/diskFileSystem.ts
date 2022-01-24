@@ -59,7 +59,7 @@ class DiskFileSystem {
     let childNodesBuffer = this.internalDisk.readData(initNode);
     let childNodesDecrypted = AES.decrypt(childNodesBuffer, this.pass).toString('utf-8');
     let folder: FolderContent = JSON.parse(childNodesDecrypted);
-    if (!path.length && initNode === this.internalDisk.RESERVED_BLOCK) return folder;
+    if (!path.length) return folder;
     let pathClone = [...path];
     let target = pathClone.shift();
     for (const node of folder) {
@@ -88,6 +88,12 @@ class DiskFileSystem {
 
   public async writeFolder(path: string[], newContent: FolderContent) {
     let pathClone = [...path];
+    if (!pathClone.length) {
+      let newContentBuffer = Buffer.from(JSON.stringify(newContent), 'utf-8');
+      let newContentEncrypted = AES.encrypt(newContentBuffer, this.pass);
+      this.internalDisk.writeData(newContentEncrypted, { initBlock: this.internalDisk.RESERVED_BLOCK });
+      return;
+    }
     let target = pathClone.pop();
     let parentFolder = await this.readFolder(pathClone);
     for (const node of parentFolder) {
@@ -154,6 +160,9 @@ class DiskFileSystem {
     }
     let parentFolder = await this.readFolder(origin);
     let initBlock = this.internalDisk.getFreeBlocks(1)[0];
+    let content = Buffer.from('[]', 'utf-8');
+    let contentEncrypted = AES.encrypt(content, this.pass);
+    this.internalDisk.writeData(contentEncrypted, { initBlock });
     parentFolder.push({
       type: 'folder',
       name,

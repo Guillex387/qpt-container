@@ -1,12 +1,13 @@
 const errorMsgs: string[] = [
-  'Incorrect key',
-  'Invalid key',
-  "The disk doesn't exists",
-  'Error reading the disk',
-  'Error writing the disk',
-  'Error creating the disk',
-  "Error, the element doesn't exists",
-  'Error, the element already exists',
+  'Incorrect key', // code 0
+  'Invalid key', // code 1
+  "The disk doesn't exists", // code 2
+  'Error reading the disk', // code 3
+  'Error writing the disk', // code 4
+  'Error creating the disk', // code 5
+  "Error, the element doesn't exists", // code 6
+  'Error, the element already exists', // code 7
+  'The name already exists', // code 8
 ];
 
 class Error {

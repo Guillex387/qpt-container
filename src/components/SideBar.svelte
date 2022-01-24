@@ -36,7 +36,7 @@
     </div>
     <ul class="flex flex-col h-full">
       <li on:click={() => navigate('home')} class="p-5 w-72 my-2 hover-effect rounded-lg">Home</li>
-      <li on:click={() => navigate('config')} class="p-5 w-72 my-2 hover-effect rounded-lg">Settings</li>
+      <li on:click={() => navigate('settings')} class="p-5 w-72 my-2 hover-effect rounded-lg">Settings</li>
       <li on:click={() => navigate('license')} class="p-5 w-72 mt-auto mb-2 hover-effect rounded-lg">License & Copyright</li>
     </ul>
   </div>

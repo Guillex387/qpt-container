@@ -36,7 +36,7 @@
         and modifications, which include larger works using a licensed work, under the same license. Copyright and license notices
         must be preserved. Contributors provide an express grant of patent rights.
       </p>
-      <p class="text-center mt-5">Guillex387 © 2022</p>
+      <p class="text-center mt-5 opacity-50 text-sm">Guillex387 © 2022</p>
     </div>
   </article>
   <SideBar on:hide={hideSideBar} visible={visibleSideBar} />

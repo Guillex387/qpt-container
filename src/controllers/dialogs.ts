@@ -3,11 +3,11 @@ const { ipcRenderer } = require('electron');
 
 export interface FileFilter {
   name: string;
-  extensions: string;
+  extensions: string[];
 }
 
 export const showErrorBox = (err: Error) => {
-  ipcRenderer.sendSync('error-box', err.code, err.message);
+  ipcRenderer.send('error-box', err.code, err.message);
 };
 
 export const showOpenBox = (multiSelections: boolean = false, filters: FileFilter[] = []): string[] | undefined => {

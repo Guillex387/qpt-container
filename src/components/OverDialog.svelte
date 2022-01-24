@@ -24,8 +24,6 @@
 
 <style>
   #container {
-    width: 70%;
-    height: 60%;
     background: #373c3f;
   }
 </style>
