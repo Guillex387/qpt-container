@@ -3,8 +3,8 @@
   import DiskComponent from './DiskComponent.svelte';
   import { disksData, DisksData, reloadDisksData, setDisksData } from '../controllers/disksManager';
   import { disks } from '../globalState';
-  import Center from './Center.svelte';
-  import IconBtn from './IconBtn.svelte';
+  import Center from './utils/Center.svelte';
+  import IconBtn from './utils/IconBtn.svelte';
   import FileImportSolid from '../icons/file-import-solid.svelte';
   import PlusCircleSolid from '../icons/plus-circle-solid.svelte';
   import RedoAltSolid from '../icons/redo-alt-solid.svelte';
@@ -14,7 +14,7 @@
   import { createDisk } from '../controllers/diskController';
   import InputForm from './forms/InputForm.svelte';
   import Error from '../lib/error';
-  import Loader from './Loader.svelte';
+  import Loader from './utils/Loader.svelte';
 
   let disksState: DisksData | null = null;
   $: diskList = disksState && Object.keys(disksState);

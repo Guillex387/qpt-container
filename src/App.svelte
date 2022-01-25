@@ -6,6 +6,7 @@
   import DiskPage from './pages/DiskPage.svelte';
   import Settings from './pages/Settings.svelte';
   import { fade, fly } from 'svelte/transition';
+  import PreviewsPage from './pages/PreviewsPage.svelte';
 
   let renderPage: string = 'home';
 
@@ -22,6 +23,10 @@
   {:else if renderPage === 'disk'}
     <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
       <DiskPage />
+    </div>
+  {:else if renderPage === 'preview'}
+    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+      <PreviewsPage />
     </div>
   {:else if renderPage === 'settings'}
     <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>

@@ -4,8 +4,8 @@
   import { loadedDisk, loadedDiskWorkPath, page } from '../globalState';
   import DiskFileSystem, { FolderContent } from '../lib/disk/diskFileSystem';
   import { showErrorBox, showOpenBox } from '../controllers/dialogs';
-  import Center from './Center.svelte';
-  import IconBtn from './IconBtn.svelte';
+  import Center from './utils/Center.svelte';
+  import IconBtn from './utils/IconBtn.svelte';
   import FileImportSolid from '../icons/file-import-solid.svelte';
   import FileMedicalSolid from '../icons/file-medical-solid.svelte';
   import FolderPlusSolid from '../icons/folder-plus-solid.svelte';
@@ -14,7 +14,7 @@
   import * as fs from 'fs';
   import OverDialog from './OverDialog.svelte';
   import InputForm from './forms/InputForm.svelte';
-  import Loader from './Loader.svelte';
+  import Loader from './utils/Loader.svelte';
 
   let disk: DiskFileSystem | null = null;
   let workPath: string[] | null = null;

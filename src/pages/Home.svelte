@@ -1,6 +1,6 @@
 <script lang="ts">
-  import IconBtn from '../components/IconBtn.svelte';
-  import Center from '../components/Center.svelte';
+  import IconBtn from '../components/utils/IconBtn.svelte';
+  import Center from '../components/utils/Center.svelte';
   import BarsSolid from '../icons/bars-solid.svelte';
   import SideBar from '../components/SideBar.svelte';
   import DiskList from '../components/DiskList.svelte';

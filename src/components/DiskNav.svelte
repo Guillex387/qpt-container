@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
-  import Center from './Center.svelte';
+  import Center from './utils/Center.svelte';
   import { loadedDisk, loadedDiskWorkPath } from '../globalState';
 
   let path: string[] = [];

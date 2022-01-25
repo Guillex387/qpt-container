@@ -1,6 +1,6 @@
 <script lang="ts">
-  import IconBtn from '../components/IconBtn.svelte';
-  import Center from '../components/Center.svelte';
+  import IconBtn from '../components/utils/IconBtn.svelte';
+  import Center from '../components/utils/Center.svelte';
   import ArrowLeftSolid from '../icons/arrow-left-solid.svelte';
   import DiskNav from '../components/DiskNav.svelte';
   import SystemItemList from '../components/SystemItemList.svelte';

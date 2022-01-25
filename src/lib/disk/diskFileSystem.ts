@@ -40,22 +40,17 @@ class DiskFileSystem {
   private pass: string;
   private internalDisk: Disk;
 
-  public async existsElement(path: string[], type: 'file' | 'folder'): Promise<boolean> {
+  public existsElement(path: string[], type: 'file' | 'folder'): boolean {
     let pathClone = [...path];
     let target = pathClone.pop();
-    let parentFolder: FolderContent;
-    try {
-      parentFolder = await this.readFolder(pathClone);
-    } catch (error) {
-      return false;
-    }
+    let parentFolder = this.readFolder(pathClone);
     for (const node of parentFolder) {
       if (node.name === target && node.type === type) return true;
     }
     return false;
   }
 
-  public async readFolder(path: string[], initNode: number = this.internalDisk.RESERVED_BLOCK): Promise<FolderContent> {
+  public readFolder(path: string[], initNode: number = this.internalDisk.RESERVED_BLOCK): FolderContent {
     let childNodesBuffer = this.internalDisk.readData(initNode);
     let childNodesDecrypted = AES.decrypt(childNodesBuffer, this.pass).toString('utf-8');
     let folder: FolderContent = JSON.parse(childNodesDecrypted);
@@ -68,16 +63,16 @@ class DiskFileSystem {
           let buffer = this.internalDisk.readData(node.initBlock);
           let decryptedStr = AES.decrypt(buffer, this.pass).toString('utf-8');
           return JSON.parse(decryptedStr) as FolderContent;
-        } else return await this.readFolder(pathClone, node.initBlock);
+        } else return this.readFolder(pathClone, node.initBlock);
       }
     }
     throw new Error(6);
   }
 
-  public async readFile(path: string[]): Promise<Buffer> {
+  public readFile(path: string[]): Buffer {
     let pathClone = [...path];
     let target = pathClone.pop();
-    let parentFolder = await this.readFolder(pathClone);
+    let parentFolder = this.readFolder(pathClone);
     for (const node of parentFolder)
       if (node.name === target && node.type === 'file') {
         let encryptedData = this.internalDisk.readData(node.initBlock);
@@ -86,7 +81,7 @@ class DiskFileSystem {
     throw new Error(6);
   }
 
-  public async writeFolder(path: string[], newContent: FolderContent) {
+  public writeFolder(path: string[], newContent: FolderContent) {
     let pathClone = [...path];
     if (!pathClone.length) {
       let newContentBuffer = Buffer.from(JSON.stringify(newContent), 'utf-8');
@@ -95,7 +90,7 @@ class DiskFileSystem {
       return;
     }
     let target = pathClone.pop();
-    let parentFolder = await this.readFolder(pathClone);
+    let parentFolder = this.readFolder(pathClone);
     for (const node of parentFolder) {
       if (node.name === target && node.type === 'folder') {
         let newContentBuffer = Buffer.from(JSON.stringify(newContent), 'utf-8');
@@ -107,15 +102,15 @@ class DiskFileSystem {
     throw new Error(6);
   }
 
-  public async writeFile(path: string[], newContent: Buffer) {
+  public writeFile(path: string[], newContent: Buffer) {
     let pathClone = [...path];
     let target = pathClone.pop();
-    let parentFolder = await this.readFolder(pathClone);
+    let parentFolder = this.readFolder(pathClone);
     for (const node of parentFolder) {
       if (node.name === target && node.type === 'file') {
         let encryptedContent = AES.encrypt(newContent, this.pass);
         node.size = encryptedContent.length;
-        await this.writeFolder(pathClone, parentFolder);
+        this.writeFolder(pathClone, parentFolder);
         this.internalDisk.writeData(encryptedContent, { initBlock: node.initBlock });
         return;
       }
@@ -123,26 +118,26 @@ class DiskFileSystem {
     throw new Error(6);
   }
 
-  public async renameElement(path: string[], type: 'file' | 'folder', newName: string) {
+  public renameElement(path: string[], type: 'file' | 'folder', newName: string) {
     let pathClone = [...path];
     let target = pathClone.pop();
-    let parentFolder = await this.readFolder(pathClone);
+    let parentFolder = this.readFolder(pathClone);
     for (let node of parentFolder)
       if (node.name === target && node.type === type) {
         node.name = newName;
-        await this.writeFolder(pathClone, parentFolder);
+        this.writeFolder(pathClone, parentFolder);
         return;
       }
     throw new Error(6);
   }
 
-  public async createFile(origin: string[], name: string, content: Buffer) {
+  public createFile(origin: string[], name: string, content: Buffer) {
     let contentEncrypted = AES.encrypt(content, this.pass);
-    let exists = await this.existsElement([...origin, name], 'file');
+    let exists = this.existsElement([...origin, name], 'file');
     if (exists) {
       throw new Error(7);
     }
-    let parentFolder = await this.readFolder(origin);
+    let parentFolder = this.readFolder(origin);
     let initBlock = this.internalDisk.writeData(contentEncrypted);
     parentFolder.push({
       type: 'file',
@@ -150,15 +145,15 @@ class DiskFileSystem {
       initBlock,
       size: contentEncrypted.length,
     });
-    await this.writeFolder(origin, parentFolder);
+    this.writeFolder(origin, parentFolder);
   }
 
-  public async createFolder(origin: string[], name: string) {
-    let exists = await this.existsElement([...origin, name], 'folder');
+  public createFolder(origin: string[], name: string) {
+    let exists = this.existsElement([...origin, name], 'folder');
     if (exists) {
       throw new Error(7);
     }
-    let parentFolder = await this.readFolder(origin);
+    let parentFolder = this.readFolder(origin);
     let initBlock = this.internalDisk.getFreeBlocks(1)[0];
     let content = Buffer.from('[]', 'utf-8');
     let contentEncrypted = AES.encrypt(content, this.pass);
@@ -168,18 +163,18 @@ class DiskFileSystem {
       name,
       initBlock,
     });
-    await this.writeFolder(origin, parentFolder);
+    this.writeFolder(origin, parentFolder);
   }
 
-  public async removeFile(path: string[]) {
+  public removeFile(path: string[]) {
     let pathClone = [...path];
     let target = pathClone.pop();
-    let parentFolder = await this.readFolder(pathClone);
+    let parentFolder = this.readFolder(pathClone);
     for (let i = 0; i < parentFolder.length; i++) {
       let node = parentFolder[i];
       if (node.name === target && node.type === 'file') {
         parentFolder.splice(i, 1);
-        await this.writeFolder(pathClone, parentFolder);
+        this.writeFolder(pathClone, parentFolder);
         this.internalDisk.removeData(node.initBlock);
         return;
       }
@@ -187,22 +182,22 @@ class DiskFileSystem {
     throw new Error(6);
   }
 
-  public async removeFolder(path: string[], deleteNode: boolean = true) {
+  public removeFolder(path: string[], deleteNode: boolean = true) {
     let removeBlocks: number[] = [];
     let pathClone = [...path];
-    let folderContent = await this.readFolder(pathClone);
+    let folderContent = this.readFolder(pathClone);
     for (const node of folderContent) {
       removeBlocks.push(node.initBlock);
-      if (node.type === 'folder') await this.removeFolder([...path, node.name], false);
+      if (node.type === 'folder') this.removeFolder([...path, node.name], false);
     }
     if (deleteNode) {
       let target = pathClone.pop();
-      let parentFolder = await this.readFolder(pathClone);
+      let parentFolder = this.readFolder(pathClone);
       for (let i = 0; i < parentFolder.length; i++) {
         let node = parentFolder[i];
         if (node.name === target && node.type === 'folder') {
           parentFolder.splice(i, 1);
-          await this.writeFolder(pathClone, parentFolder);
+          this.writeFolder(pathClone, parentFolder);
           this.internalDisk.removeData(node.initBlock);
           return;
         }

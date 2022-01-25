@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Center from './Center.svelte';
+  import Center from './utils/Center.svelte';
   import HddSolid from '../icons/hdd-solid.svelte';
-  import IconBtn from './IconBtn.svelte';
+  import IconBtn from './utils/IconBtn.svelte';
   import DropDown from './DropDown.svelte';
   import MenuItem from './MenuItem.svelte';
   import PenSolid from '../icons/pen-solid.svelte';

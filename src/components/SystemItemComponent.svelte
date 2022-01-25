@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Center from './Center.svelte';
+  import Center from './utils/Center.svelte';
   import FileSolid from '../icons/file-solid.svelte';
   import FolderSolid from '../icons/folder-solid.svelte';
-  import IconBtn from './IconBtn.svelte';
+  import IconBtn from './utils/IconBtn.svelte';
   import DropDown from './DropDown.svelte';
   import MenuItem from './MenuItem.svelte';
   import DiskFileSystem, { FileNodeI, FolderNodeI } from '../lib/disk/diskFileSystem';
@@ -15,6 +15,8 @@
   import { showErrorBox, showSaveBox } from '../controllers/dialogs';
   import * as path from 'path';
   import * as fs from 'fs';
+  import OverDialog from './OverDialog.svelte';
+  import InputForm from './forms/InputForm.svelte';
 
   let visibleMenu = false;
   const showMenu = () => (visibleMenu = true);
@@ -23,6 +25,10 @@
   export let obj: FileNodeI | FolderNodeI;
   export let disk: DiskFileSystem;
   export let originPath: string[];
+
+  let visibleDialog = false;
+  const showDialog = () => (visibleDialog = true);
+  const hideDialog = () => (visibleDialog = false);
 
   const openItem = () => {
     if (obj.type === 'folder') {
@@ -54,6 +60,7 @@
 
   const editItem = () => {
     // TODO: open the edit page
+    console.log('Opened file editor:', obj.name);
   };
 
   const exportItem = async () => {
@@ -87,7 +94,13 @@
   <div class="flex-none w-12 h-full icon-hover rounded-lg">
     <DropDown visible={visibleMenu} on:show={showMenu} on:hide={hideMenu}>
       {#if obj.type === 'folder'}
-        <MenuItem text="Rename">
+        <MenuItem
+          on:click={() => {
+            showDialog();
+            hideMenu();
+          }}
+          text="Rename"
+        >
           <Center>
             <IconBtn width={'1rem'}>
               <PenSolid />
@@ -102,14 +115,20 @@
           </Center>
         </MenuItem>
       {:else}
-        <MenuItem text="Rename">
+        <MenuItem
+          on:click={() => {
+            showDialog();
+            hideMenu();
+          }}
+          text="Rename"
+        >
           <Center>
             <IconBtn width={'1rem'}>
               <PenSolid />
             </IconBtn>
           </Center>
         </MenuItem>
-        <MenuItem text="Edit">
+        <MenuItem on:click={editItem} text="Edit">
           <Center>
             <IconBtn width={'1rem'}>
               <EditSolid />
@@ -133,7 +152,9 @@
       {/if}
     </DropDown>
   </div>
-  <!-- TODO: put here the dialog for rename items -->
+  <OverDialog visible={visibleDialog} on:hide={hideDialog}>
+    <InputForm placeholder="New item name" on:submit={e => renameItem(e.detail.value)} />
+  </OverDialog>
 </div>
 
 <style>
