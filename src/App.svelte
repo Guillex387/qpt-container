@@ -5,8 +5,8 @@
   import License from './pages/License.svelte';
   import DiskPage from './pages/DiskPage.svelte';
   import Settings from './pages/Settings.svelte';
-  import { fade, fly } from 'svelte/transition';
   import PreviewsPage from './pages/PreviewsPage.svelte';
+  import PageTransition from './components/utils/PageTransition.svelte';
 
   let renderPage: string = 'home';
 
@@ -17,27 +17,29 @@
 
 <main id="root">
   {#if renderPage === 'home'}
-    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+    <PageTransition>
       <Home />
-    </div>
+    </PageTransition>
   {:else if renderPage === 'disk'}
-    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+    <PageTransition>
       <DiskPage />
-    </div>
+    </PageTransition>
   {:else if renderPage === 'preview'}
-    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+    <PageTransition>
       <PreviewsPage />
-    </div>
+    </PageTransition>
   {:else if renderPage === 'settings'}
-    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+    <PageTransition>
       <Settings />
-    </div>
+    </PageTransition>
   {:else if renderPage === 'license'}
-    <div in:fly={{ y: -200, duration: 300 }} out:fade={{ duration: 300 }}>
+    <PageTransition>
       <License />
-    </div>
+    </PageTransition>
   {:else}
-    <Home />
+    <PageTransition>
+      <Home />
+    </PageTransition>
   {/if}
 </main>
 

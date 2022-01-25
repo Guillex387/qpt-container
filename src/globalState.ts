@@ -6,3 +6,4 @@ export let page = writable('home');
 export let disks = writable(disksData());
 export let loadedDisk = writable<DiskFileSystem | null>(null);
 export let loadedDiskWorkPath = writable<string[] | null>(null);
+export let filePreview = writable<{ name: string; content: Buffer }>({ name: 'Default', content: Buffer.alloc(0) });
