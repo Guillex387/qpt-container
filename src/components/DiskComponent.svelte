@@ -2,10 +2,10 @@
   import Center from './utils/Center.svelte';
   import HddSolid from '../icons/hdd-solid.svelte';
   import IconBtn from './utils/IconBtn.svelte';
-  import DropDown from './DropDown.svelte';
+  import DropDown from './overlays/DropDown.svelte';
   import MenuItem from './MenuItem.svelte';
   import PenSolid from '../icons/pen-solid.svelte';
-  import OverDialog from './OverDialog.svelte';
+  import OverDialog from './overlays/OverDialog.svelte';
   import InputForm from './forms/InputForm.svelte';
   import TrashAltSolid from '../icons/trash-alt-solid.svelte';
   import { showErrorBox } from '../controllers/dialogs';

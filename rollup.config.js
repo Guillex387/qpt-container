@@ -46,7 +46,7 @@ export default cliArgs => {
 			}),
 			resolve({
 				browser: false,
-				dedupe: ['svelte']
+				dedupe: ['svelte', 'dompurify', 'mime-types', 'three']
 			}),
 			commonjs(),
 			injectEnv({

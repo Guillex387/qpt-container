@@ -3,7 +3,7 @@
   import FileSolid from '../icons/file-solid.svelte';
   import FolderSolid from '../icons/folder-solid.svelte';
   import IconBtn from './utils/IconBtn.svelte';
-  import DropDown from './DropDown.svelte';
+  import DropDown from './overlays/DropDown.svelte';
   import MenuItem from './MenuItem.svelte';
   import DiskFileSystem, { FileNodeI, FolderNodeI } from '../lib/disk/diskFileSystem';
   import { loadedDiskWorkPath } from '../globalState';
@@ -15,7 +15,7 @@
   import { showErrorBox, showSaveBox } from '../controllers/dialogs';
   import * as path from 'path';
   import * as fs from 'fs';
-  import OverDialog from './OverDialog.svelte';
+  import OverDialog from './overlays/OverDialog.svelte';
   import InputForm from './forms/InputForm.svelte';
 
   let visibleMenu = false;

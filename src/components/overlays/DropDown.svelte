@@ -1,10 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { scale } from 'svelte/transition';
-  import IconBtn from './utils/IconBtn.svelte';
-  import EllipsisHSolid from '../icons/ellipsis-h-solid.svelte';
+  import IconBtn from '../utils/IconBtn.svelte';
+  import EllipsisHSolid from '../../icons/ellipsis-h-solid.svelte';
   import { clickOutside } from '../../utils/ClickOutSide';
-  import Center from './utils/Center.svelte';
+  import Center from '../utils/Center.svelte';
 
   let dispatcher = createEventDispatcher();
 

@@ -12,7 +12,7 @@
   import RedoAltSolid from '../icons/redo-alt-solid.svelte';
   import * as path from 'path';
   import * as fs from 'fs';
-  import OverDialog from './OverDialog.svelte';
+  import OverDialog from './overlays/OverDialog.svelte';
   import InputForm from './forms/InputForm.svelte';
   import Loader from './utils/Loader.svelte';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Center from './utils/Center.svelte';
+  import Center from '../utils/Center.svelte';
   import { fade, fly } from 'svelte/transition';
   import { createEventDispatcher } from 'svelte';
   import { clickOutside } from '../../utils/ClickOutSide';

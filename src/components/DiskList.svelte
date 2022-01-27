@@ -8,7 +8,7 @@
   import FileImportSolid from '../icons/file-import-solid.svelte';
   import PlusCircleSolid from '../icons/plus-circle-solid.svelte';
   import RedoAltSolid from '../icons/redo-alt-solid.svelte';
-  import OverDialog from './OverDialog.svelte';
+  import OverDialog from './overlays/OverDialog.svelte';
   import CreateDisk from './forms/CreateDisk.svelte';
   import { showErrorBox, showOpenBox, showSaveBox } from '../controllers/dialogs';
   import { createDisk } from '../controllers/diskController';

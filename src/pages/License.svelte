@@ -2,7 +2,7 @@
   import IconBtn from '../components/utils/IconBtn.svelte';
   import Center from '../components/utils/Center.svelte';
   import BarsSolid from '../icons/bars-solid.svelte';
-  import SideBar from '../components/SideBar.svelte';
+  import SideBar from '../components/overlays/SideBar.svelte';
 
   let visibleSideBar = false;
   function showSideBar() {

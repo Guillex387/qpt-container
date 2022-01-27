@@ -2,9 +2,9 @@
   import { fly, fade } from 'svelte/transition';
   import { createEventDispatcher } from 'svelte';
   import { page } from '../../globalState';
-  import Center from './utils/Center.svelte';
-  import IconBtn from './utils/IconBtn.svelte';
-  import BarsSolid from '../icons/bars-solid.svelte';
+  import Center from '../utils/Center.svelte';
+  import IconBtn from '../utils/IconBtn.svelte';
+  import BarsSolid from '../../icons/bars-solid.svelte';
 
   let dispatcher = createEventDispatcher();
 
