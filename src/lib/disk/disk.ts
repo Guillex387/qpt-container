@@ -233,14 +233,11 @@ class Disk {
     let truncateBytes = bytes;
     let freeBlocks: number[] = [];
     for (const block of blockArrayReversed) {
+      let initBlock = blockArrayReversed[blockArrayReversed.length - 1];
       let blockDataLength = this.getBlockDataLength(block);
       truncateBytes -= blockDataLength;
-      if (truncateBytes > 0) {
-        freeBlocks.push(block);
-      } else if (truncateBytes === 0) {
-        freeBlocks.push(block);
-        break;
-      } else {
+      if (truncateBytes >= 0 && block !== initBlock) freeBlocks.push(block);
+      else {
         let lengthOffset = this.BLOCK_SIZE * block + 8;
         let lengthBuffer = UIntToBuffer(Math.abs(truncateBytes));
         let pointerOffset = lengthOffset + this.BLOCK_DATA_SIZE + 8;
@@ -253,7 +250,7 @@ class Disk {
         break;
       }
     }
-    this.setBlocksFree(...freeBlocks);
+    freeBlocks.length && this.setBlocksFree(...freeBlocks);
   }
 
   public removeData(initBlock: number) {
