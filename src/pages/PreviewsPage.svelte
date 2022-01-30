@@ -16,16 +16,18 @@
 
   let filePreviewLocal: { name: string; content: Buffer } = { name: 'Default', content: Buffer.alloc(0) };
   let previewUrl: string = '';
-  let mimeType = lookup(filePreviewLocal.name);
-  let baseType = mimeType && mimeType.split('/').shift();
+  let mimeType: string = '';
+  let baseType: string = '';
 
   const getUrl = (buf: Buffer) => {
-    let blob = new Blob([Uint8Array.from(buf)]);
+    let blob = new Blob([buf.buffer], { type: mimeType });
     return URL.createObjectURL(blob);
   };
 
   const unsubscribeFile = filePreview.subscribe(value => {
     filePreviewLocal = value;
+    mimeType = lookup(filePreviewLocal.name) || '';
+    baseType = (mimeType && mimeType.split('/').shift()) || '';
     previewUrl = getUrl(value.content);
   });
 

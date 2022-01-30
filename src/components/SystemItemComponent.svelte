@@ -6,7 +6,7 @@
   import DropDown from './overlays/DropDown.svelte';
   import MenuItem from './MenuItem.svelte';
   import DiskFileSystem, { FileNodeI, FolderNodeI } from '../lib/disk/diskFileSystem';
-  import { loadedDiskWorkPath } from '../globalState';
+  import { filePreview, loadedDiskWorkPath, page } from '../globalState';
   import PenSolid from '../icons/pen-solid.svelte';
   import TrashAltSolid from '../icons/trash-alt-solid.svelte';
   import EditSolid from '../icons/edit-solid.svelte';
@@ -30,18 +30,23 @@
   const showDialog = () => (visibleDialog = true);
   const hideDialog = () => (visibleDialog = false);
 
-  const openItem = () => {
+  const openItem = async () => {
     if (obj.type === 'folder') {
       loadedDiskWorkPath.update(path => [...path, obj.name]);
     } else {
-      // TODO: open a file preview
-      console.log('Opened file preview:', obj.name);
+      try {
+        let content = disk.readFile([...originPath, obj.name]);
+        filePreview.set({ name: obj.name, content });
+        page.set('preview');
+      } catch (error) {
+        showErrorBox(error);
+      }
     }
   };
 
   const renameItem = async (newName: string) => {
     try {
-      await disk.renameElement([...originPath, obj.name], obj.type, newName);
+      disk.renameElement([...originPath, obj.name], obj.type, newName);
     } catch (error) {
       showErrorBox(error);
     }
@@ -50,8 +55,8 @@
 
   const deleteItem = async () => {
     try {
-      if (obj.type === 'file') await disk.removeFile([...originPath, obj.name]);
-      else await disk.removeFolder([...originPath, obj.name]);
+      if (obj.type === 'file') disk.removeFile([...originPath, obj.name]);
+      else disk.removeFolder([...originPath, obj.name]);
     } catch (error) {
       showErrorBox(error);
     }

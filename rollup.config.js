@@ -29,6 +29,7 @@ export default cliArgs => {
 			name: 'app',
 			file: 'core/build/bundle.js'
 		},
+		external: ['mime-types', 'dompurify'],
 		plugins: [
 			svelte({
 				preprocess: sveltePreprocess({
@@ -46,7 +47,7 @@ export default cliArgs => {
 			}),
 			resolve({
 				browser: false,
-				dedupe: ['svelte', 'dompurify', 'mime-types', 'three']
+				dedupe: ['svelte', 'three']
 			}),
 			commonjs(),
 			injectEnv({

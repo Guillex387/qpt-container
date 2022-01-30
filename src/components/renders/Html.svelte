@@ -11,7 +11,7 @@
     let response = await fetch(src);
     let dirty = await response.text();
     let staticHtml = sanitize(dirty);
-    localDataUrl = URL.createObjectURL(new Blob([staticHtml]));
+    localDataUrl = URL.createObjectURL(new Blob([staticHtml], { type: 'text/html' }));
   };
 
   onMount(init);
@@ -26,6 +26,6 @@
       <Loader />
     </Center>
   {:else}
-    <iframe class="w-full h-full" title="Html preview" src={localDataUrl} />
+    <embed class="w-full h-full bg-white" type="text/html" src={localDataUrl} />
   {/if}
 </div>
