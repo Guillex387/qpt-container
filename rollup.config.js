@@ -19,45 +19,41 @@ const deleteSourceMaps = () => {
 
 production && deleteSourceMaps();
 
-export default cliArgs => {
-	let portableVersion = cliArgs.portable || false;
-	return {
-		input: 'src/main.ts',
-		output: {
-			sourcemap: !production,
-			format: 'cjs',
-			name: 'app',
-			file: 'core/build/bundle.js'
-		},
-		external: ['mime-types', 'dompurify'],
-		plugins: [
-			svelte({
-				preprocess: sveltePreprocess({
-					sourceMap: !production,
-					postcss: true
-				}),
-				compilerOptions: {
-					dev: !production
-				}
-			}),
-			css({ output: 'bundle.css' }),
-			typescript({
+export default {
+	input: 'src/main.ts',
+	output: {
+		sourcemap: !production,
+		format: 'cjs',
+		name: 'app',
+		file: 'core/build/bundle.js'
+	},
+	external: ['mime-types', 'dompurify'],
+	plugins: [
+		svelte({
+			preprocess: sveltePreprocess({
 				sourceMap: !production,
-				inlineSources: !production
+				postcss: true
 			}),
-			resolve({
-				browser: false,
-				dedupe: ['svelte', 'three']
-			}),
-			commonjs(),
-			injectEnv({
-				PRODUCTION: production.toString(),
-				PORTABLE: portableVersion.toString()
-			}),
-			production && terser()
-		],
-		watch: {
-			clearScreen: false
-		}
+			compilerOptions: {
+				dev: !production
+			}
+		}),
+		css({ output: 'bundle.css' }),
+		typescript({
+			sourceMap: !production,
+			inlineSources: !production
+		}),
+		resolve({
+			browser: false,
+			dedupe: ['svelte', 'three']
+		}),
+		commonjs(),
+		injectEnv({
+			PRODUCTION: production.toString()
+		}),
+		production && terser()
+	],
+	watch: {
+		clearScreen: false
 	}
-};
+}
