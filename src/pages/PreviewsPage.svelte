@@ -2,7 +2,7 @@
   import IconBtn from '../components/utils/IconBtn.svelte';
   import Center from '../components/utils/Center.svelte';
   import ArrowLeftSolid from '../icons/arrow-left-solid.svelte';
-  import { filePreview, page } from '../globalState';
+  import { fileState, page } from '../globalState';
   import { onDestroy } from 'svelte';
   import Pdf from '../components/renders/Pdf.svelte';
   import Image from '../components/renders/Image.svelte';
@@ -20,15 +20,15 @@
   let baseType: string = '';
 
   const getUrl = (buf: Buffer) => {
-    let blob = new Blob([buf.buffer], { type: mimeType });
+    let blob = new Blob([buf], { type: mimeType });
     return URL.createObjectURL(blob);
   };
 
-  const unsubscribeFile = filePreview.subscribe(value => {
+  const unsubscribeFile = fileState.subscribe(value => {
     filePreviewLocal = value;
     mimeType = lookup(filePreviewLocal.name) || '';
     baseType = (mimeType && mimeType.split('/').shift()) || '';
-    previewUrl = getUrl(value.content);
+    previewUrl = getUrl(filePreviewLocal.content);
   });
 
   onDestroy(() => {

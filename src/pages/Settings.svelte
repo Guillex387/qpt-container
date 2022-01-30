@@ -26,7 +26,7 @@
     <p class="w-full text-center">Settings</p>
     <div class="flex-none w-12 h-full" />
   </header>
-  <article class="flex flex-col text-sm opacity-50 text-center">
+  <article class="flex flex-col text-sm opacity-50 text-left">
     <div class="flex pt-4">
       <ul class="w-full p-2">
         <li>Program name &bull; {process.env.npm_package_name}</li>

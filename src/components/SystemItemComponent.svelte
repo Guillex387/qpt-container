@@ -6,7 +6,7 @@
   import DropDown from './overlays/DropDown.svelte';
   import MenuItem from './MenuItem.svelte';
   import DiskFileSystem, { FileNodeI, FolderNodeI } from '../lib/disk/diskFileSystem';
-  import { filePreview, loadedDiskWorkPath, page } from '../globalState';
+  import { fileState, loadedDiskWorkPath, page, saveCb } from '../globalState';
   import PenSolid from '../icons/pen-solid.svelte';
   import TrashAltSolid from '../icons/trash-alt-solid.svelte';
   import EditSolid from '../icons/edit-solid.svelte';
@@ -36,11 +36,28 @@
     } else {
       try {
         let content = disk.readFile([...originPath, obj.name]);
-        filePreview.set({ name: obj.name, content });
+        fileState.set({ name: obj.name, content });
         page.set('preview');
       } catch (error) {
         showErrorBox(error);
       }
+    }
+  };
+
+  const editItem = () => {
+    try {
+      let content = disk.readFile([...originPath, obj.name]);
+      fileState.set({ name: obj.name, content });
+      saveCb.set(content => {
+        try {
+          disk.writeFile([...originPath, obj.name], content);
+        } catch (error) {
+          showErrorBox(error);
+        }
+      });
+      page.set('edit');
+    } catch (error) {
+      showErrorBox(error);
     }
   };
 
@@ -61,11 +78,6 @@
       showErrorBox(error);
     }
     await reloadDisk();
-  };
-
-  const editItem = () => {
-    // TODO: open the edit page
-    console.log('Opened file editor:', obj.name);
   };
 
   const exportItem = async () => {

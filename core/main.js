@@ -36,7 +36,7 @@ function deployWindow(html, menu = null) {
       devTools: isDev
     }
   });
-  (platform() === 'linux') && window.setIcon(appIcon);
+  (platform() !== 'win32') && window.setIcon(appIcon);
   window.setMenu(menu);
   window.loadFile(html);
   window.maximize();

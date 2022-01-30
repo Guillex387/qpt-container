@@ -7,6 +7,7 @@
   import Settings from './pages/Settings.svelte';
   import PreviewsPage from './pages/PreviewsPage.svelte';
   import PageTransition from './components/utils/PageTransition.svelte';
+  import EditPage from './pages/EditPage.svelte';
 
   let renderPage: string = 'home';
 
@@ -27,6 +28,10 @@
   {:else if renderPage === 'preview'}
     <PageTransition>
       <PreviewsPage />
+    </PageTransition>
+  {:else if renderPage === 'edit'}
+    <PageTransition>
+      <EditPage />
     </PageTransition>
   {:else if renderPage === 'settings'}
     <PageTransition>
