@@ -11,7 +11,7 @@
   import Loader from '../components/utils/Loader.svelte';
   import Audio from '../components/renders/Audio.svelte';
   import Html from '../components/renders/Html.svelte';
-  import Obj from '../components/renders/obj.svelte';
+  import Obj from '../components/renders/Obj.svelte';
   import { lookup } from 'mime-types';
 
   let filePreviewLocal: { name: string; content: Buffer } = { name: 'Default', content: Buffer.alloc(0) };
