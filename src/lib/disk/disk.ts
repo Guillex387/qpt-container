@@ -101,7 +101,7 @@ class Disk {
     let length = opts.length;
     let blocksCount = blockArray.length;
     if (length) {
-      blocksCount = Math.floor(length / this.BLOCK_DATA_SIZE) + 1;
+      blocksCount = Math.floor((offsetRemainder + length) / this.BLOCK_DATA_SIZE) + 1;
     }
     blockArray.slice(firstBlockIndex, firstBlockIndex + blocksCount);
     let fileParts: Buffer[] = [];
