@@ -73,7 +73,7 @@ class Disk {
       extraBlocks = this.createBlocks((bytesToRead - totalLength) / 8);
       buffer.length && this.truncateData(this.REGISTRY_BLOCK, buffer.length);
     } else {
-      buffer = this.readData(this.REGISTRY_BLOCK, { offset: readOffset, length: bytesToRead }); // Maybe this lines is the problem
+      buffer = this.readData(this.REGISTRY_BLOCK, readOffset, bytesToRead); // Maybe this lines is the problem
       this.truncateData(this.REGISTRY_BLOCK, bytesToRead);
     }
     let blocksFree: number[] = [];
@@ -89,21 +89,8 @@ class Disk {
     this.appendData(this.REGISTRY_BLOCK, allFreeBlocks);
   }
 
-  public readData(initBlock: number, opts: { offset?: number; length?: number } = {}) {
+  public readData(initBlock: number, offset?: number, length?: number) {
     let blockArray = this.getBlockArray(initBlock);
-    let offset = opts.offset;
-    let offsetRemainder: number = 0;
-    let firstBlockIndex: number = 0;
-    if (offset) {
-      offsetRemainder = offset % this.BLOCK_DATA_SIZE;
-      firstBlockIndex = (offset - offsetRemainder) / this.BLOCK_DATA_SIZE;
-    }
-    let length = opts.length;
-    let blocksCount = blockArray.length;
-    if (length) {
-      blocksCount = Math.floor((offsetRemainder + length) / this.BLOCK_DATA_SIZE) + 1;
-    }
-    blockArray.slice(firstBlockIndex, firstBlockIndex + blocksCount);
     let fileParts: Buffer[] = [];
     for (const block of blockArray) {
       let partLength = this.getBlockDataLength(block);
@@ -117,9 +104,10 @@ class Disk {
       }
       fileParts.push(part);
     }
-    let rawBuffer = Buffer.concat(fileParts);
-    if (!length) length = rawBuffer.length;
-    return rawBuffer.slice(offsetRemainder, offsetRemainder + length);
+    let buffer = Buffer.concat(fileParts);
+    if (offset && length) return buffer.slice(offset, offset + length);
+    if (offset) return buffer.slice(offset);
+    return buffer;
   }
 
   public createBlocks(n: number = 1) {
