@@ -73,7 +73,7 @@ class Disk {
       extraBlocks = this.createBlocks((bytesToRead - totalLength) / 8);
       buffer.length && this.truncateData(this.REGISTRY_BLOCK, buffer.length);
     } else {
-      buffer = this.readData(this.REGISTRY_BLOCK, readOffset, bytesToRead); // Maybe this lines is the problem
+      buffer = this.readData(this.REGISTRY_BLOCK, readOffset, bytesToRead);
       this.truncateData(this.REGISTRY_BLOCK, bytesToRead);
     }
     let blocksFree: number[] = [];
@@ -171,78 +171,14 @@ class Disk {
   }
 
   public appendData(initBlock: number, data: Buffer) {
-    let lastBlock = this.getBlockArray(initBlock).pop();
-    let lastBlockLength = this.getBlockDataLength(lastBlock);
-    let lastBlockAvaliableSpace = this.BLOCK_DATA_SIZE - lastBlockLength;
-    let writeExtraDataLength = data.length - lastBlockAvaliableSpace;
-    let remainder = writeExtraDataLength % this.BLOCK_DATA_SIZE || this.BLOCK_DATA_SIZE;
-    let extraBlocksN = (writeExtraDataLength - remainder) / this.BLOCK_DATA_SIZE + 1;
-    let writeBlocks: number[];
-    if (data.length <= lastBlockAvaliableSpace) writeBlocks = [lastBlock];
-    else {
-      writeBlocks = lastBlockAvaliableSpace ? [lastBlock, ...this.createBlocks(extraBlocksN)] : this.createBlocks(extraBlocksN);
-    }
-    let dataOffset = 0;
-    let maintainResidualData = lastBlockAvaliableSpace !== 0;
-    for (let i = 0; i < writeBlocks.length; i++) {
-      const writeBlock = writeBlocks[i];
-      let dataPartLength: number;
-      let blockOffset = this.BLOCK_SIZE * writeBlock + 16;
-      let nextBlock = 0;
-      let nextBlockOffset = blockOffset + this.BLOCK_DATA_SIZE;
-      let lengthBuffer: Buffer;
-      if (writeBlock === writeBlocks[0] && maintainResidualData) {
-        dataPartLength = data.length - lastBlockAvaliableSpace >= 0 ? lastBlockAvaliableSpace : data.length;
-        blockOffset += lastBlockLength;
-        nextBlockOffset = blockOffset + lastBlockAvaliableSpace;
-        lengthBuffer = UIntToBuffer(lastBlockLength + dataPartLength);
-        if (data.length - lastBlockAvaliableSpace > 0) {
-          nextBlock = writeBlocks[i + 1];
-        }
-      } else if (writeBlock === writeBlocks[writeBlocks.length - 1]) {
-        dataPartLength = data.length - dataOffset;
-        lengthBuffer = UIntToBuffer(dataPartLength);
-      } else {
-        dataPartLength = this.BLOCK_DATA_SIZE;
-        lengthBuffer = UIntToBuffer(dataPartLength);
-        nextBlock = writeBlocks[i + 1];
-      }
-      let lengthOffset = this.BLOCK_SIZE * writeBlock + 8;
-      let dataPart = data.slice(dataOffset, dataOffset + dataPartLength);
-      try {
-        fs.writeSync(this.fd, lengthBuffer, 0, lengthBuffer.length, lengthOffset);
-        fs.writeSync(this.fd, dataPart, 0, dataPart.length, blockOffset);
-        nextBlock && fs.writeSync(this.fd, UIntToBuffer(nextBlock), 0, 8, nextBlockOffset);
-      } catch (error) {
-        throw new Error(4);
-      }
-      dataOffset += dataPartLength;
-    }
+    let buffer = this.readData(initBlock);
+    this.writeData(Buffer.concat([buffer, data]));
   }
 
   public truncateData(initBlock: number, bytes: number) {
-    let blockArrayReversed = this.getBlockArray(initBlock).reverse();
-    let truncateBytes = bytes;
-    let freeBlocks: number[] = [];
-    for (const block of blockArrayReversed) {
-      let initBlock = blockArrayReversed[blockArrayReversed.length - 1];
-      let blockDataLength = this.getBlockDataLength(block);
-      truncateBytes -= blockDataLength;
-      if (truncateBytes >= 0 && block !== initBlock) freeBlocks.push(block);
-      else {
-        let lengthOffset = this.BLOCK_SIZE * block + 8;
-        let lengthBuffer = UIntToBuffer(Math.abs(truncateBytes));
-        let pointerOffset = lengthOffset + this.BLOCK_DATA_SIZE + 8;
-        try {
-          fs.writeSync(this.fd, lengthBuffer, 0, lengthBuffer.length, lengthOffset);
-          fs.writeSync(this.fd, Buffer.alloc(8), 0, 8, pointerOffset);
-        } catch (error) {
-          throw new Error(4);
-        }
-        break;
-      }
-    }
-    freeBlocks.length && this.setBlocksFree(...freeBlocks);
+    let buffer = this.readData(initBlock);
+    let truncatedBuffer = buffer.slice(0, buffer.length - bytes);
+    this.writeData(truncatedBuffer, { initBlock });
   }
 
   public removeData(initBlock: number) {
