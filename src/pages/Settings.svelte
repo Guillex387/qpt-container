@@ -29,14 +29,12 @@
   <article class="flex flex-col text-sm opacity-50 text-left">
     <div class="flex pt-4">
       <ul class="w-full p-2">
-        <li>Program name &bull; {process.env.npm_package_name}</li>
+        <li>Package name &bull; {process.env.npm_package_name}</li>
         <li>Version &bull; {process.env.npm_package_version}</li>
-        <li>Description &bull; {process.env.npm_package_description}</li>
       </ul>
       <ul class="w-full p-2">
         <li>Platform &bull; {platform()}</li>
         <li>Arch &bull; {arch()}</li>
-        <li>Mode &bull; {process.env.PORTABLE === 'true' ? 'portable' : 'normal'}</li>
       </ul>
     </div>
   </article>

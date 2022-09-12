@@ -1,5 +1,5 @@
 import Error from './error';
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 class AES {
   private static formatSymKey(symKey: string): Buffer {
