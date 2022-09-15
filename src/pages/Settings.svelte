@@ -27,16 +27,12 @@
     <div class="flex-none w-12 h-full" />
   </header>
   <article class="flex flex-col text-sm opacity-50 text-left">
-    <div class="flex pt-4">
-      <ul class="w-full p-2">
-        <li>Package name &bull; {process.env.npm_package_name}</li>
-        <li>Version &bull; {process.env.npm_package_version}</li>
-      </ul>
-      <ul class="w-full p-2">
-        <li>Platform &bull; {platform()}</li>
-        <li>Arch &bull; {arch()}</li>
-      </ul>
-    </div>
+    <ul class="w-full p-4">
+      <li>Package name &bull; {process.env.PACKAGE_NAME}</li>
+      <li>Version &bull; {process.env.PACKAGE_VERSION}</li>
+      <li>Platform &bull; {platform()}</li>
+      <li>Arch &bull; {arch()}</li>
+    </ul>
   </article>
   <SideBar on:hide={hideSideBar} visible={visibleSideBar} />
 </main>

@@ -19,6 +19,8 @@ const deleteSourceMaps = () => {
 
 production && deleteSourceMaps();
 
+let packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json')));
+
 export default {
 	input: 'src/main.ts',
 	output: {
@@ -27,7 +29,7 @@ export default {
 		name: 'app',
 		file: 'core/build/bundle.js'
 	},
-	external: ['mime-types', 'dompurify'],
+	external: ['mime-types', 'dompurify', 'fs', 'path', 'crypto', 'os'],
 	plugins: [
 		svelte({
 			preprocess: sveltePreprocess({
@@ -49,7 +51,9 @@ export default {
 		}),
 		commonjs(),
 		injectEnv({
-			PRODUCTION: production.toString()
+			PRODUCTION: production.toString(),
+			PACKAGE_NAME: packageJson.name,
+			PACKAGE_VERSION: packageJson.version
 		}),
 		production && terser()
 	],

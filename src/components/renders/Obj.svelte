@@ -2,8 +2,8 @@
   import { onDestroy, onMount } from 'svelte';
 
   import { WebGLRenderer, Scene, Mesh, PerspectiveCamera, MeshMatcapMaterial, GridHelper, DoubleSide } from 'three';
-  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-  import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+  import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
   import Center from '../utils/Center.svelte';
   import Loader from '../utils/Loader.svelte';
 

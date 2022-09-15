@@ -1,5 +1,5 @@
 import Error from './error';
-import crypto from 'crypto';
+import nodeCrypto from 'crypto';
 
 class AES {
   private static formatSymKey(symKey: string): Buffer {
@@ -21,8 +21,8 @@ class AES {
   public static encrypt(buff: Buffer, pass: string): Buffer {
     if (!this.verifyPassFormat(pass)) throw new Error(1);
     const symKey = AES.formatSymKey(pass);
-    const iv = crypto.randomBytes(16);
-    let cipher = crypto.createCipheriv('aes-256-cbc', symKey, iv);
+    const iv = nodeCrypto.randomBytes(16);
+    let cipher = nodeCrypto.createCipheriv('aes-256-cbc', symKey, iv);
     return Buffer.concat([iv, cipher.update(buff), cipher.final()]);
   }
 
@@ -32,7 +32,7 @@ class AES {
     const iv = bufEnc.slice(0, 16);
     const dataEnc = bufEnc.slice(16);
     try {
-      let decipher = crypto.createDecipheriv('aes-256-cbc', symKey, iv);
+      let decipher = nodeCrypto.createDecipheriv('aes-256-cbc', symKey, iv);
       return Buffer.concat([decipher.update(dataEnc), decipher.final()]);
     } catch (err) {
       throw new Error(0);
