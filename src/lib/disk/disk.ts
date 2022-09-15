@@ -172,7 +172,7 @@ class Disk {
 
   public appendData(initBlock: number, data: Buffer) {
     let buffer = this.readData(initBlock);
-    this.writeData(Buffer.concat([buffer, data]));
+    this.writeData(Buffer.concat([buffer, data]), { initBlock });
   }
 
   public truncateData(initBlock: number, bytes: number) {
