@@ -28,9 +28,7 @@ export function createDiskFileSystem(
   let disk = createDisk(file, blockDataSize);
   let initalData = Buffer.from(JSON.stringify([]), 'utf-8');
   let encryptedData = AES.encrypt(initalData, pass);
-  disk.writeData(encryptedData, {
-    initBlock: disk.RESERVED_BLOCK,
-  });
+  disk.writeData(encryptedData, disk.RESERVED_BLOCK);
   disk.removeInstance();
   return new DiskFileSystem(file, pass, name);
 }
@@ -86,7 +84,7 @@ class DiskFileSystem {
     if (!pathClone.length) {
       let newContentBuffer = Buffer.from(JSON.stringify(newContent), 'utf-8');
       let newContentEncrypted = AES.encrypt(newContentBuffer, this.pass);
-      this.internalDisk.writeData(newContentEncrypted, { initBlock: this.internalDisk.RESERVED_BLOCK });
+      this.internalDisk.writeData(newContentEncrypted, this.internalDisk.RESERVED_BLOCK);
       return;
     }
     let target = pathClone.pop();
@@ -95,7 +93,7 @@ class DiskFileSystem {
       if (node.name === target && node.type === 'folder') {
         let newContentBuffer = Buffer.from(JSON.stringify(newContent), 'utf-8');
         let newContentEncrypted = AES.encrypt(newContentBuffer, this.pass);
-        this.internalDisk.writeData(newContentEncrypted, { initBlock: node.initBlock });
+        this.internalDisk.writeData(newContentEncrypted, node.initBlock);
         return;
       }
     }
@@ -111,7 +109,7 @@ class DiskFileSystem {
         let encryptedContent = AES.encrypt(newContent, this.pass);
         node.size = encryptedContent.length;
         this.writeFolder(pathClone, parentFolder);
-        this.internalDisk.writeData(encryptedContent, { initBlock: node.initBlock });
+        this.internalDisk.writeData(encryptedContent, node.initBlock);
         return;
       }
     }
@@ -157,7 +155,7 @@ class DiskFileSystem {
     let initBlock = this.internalDisk.getFreeBlocks(1)[0];
     let content = Buffer.from('[]', 'utf-8');
     let contentEncrypted = AES.encrypt(content, this.pass);
-    this.internalDisk.writeData(contentEncrypted, { initBlock });
+    this.internalDisk.writeData(contentEncrypted, initBlock);
     parentFolder.push({
       type: 'folder',
       name,
