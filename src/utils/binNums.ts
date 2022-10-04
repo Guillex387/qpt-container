@@ -8,3 +8,16 @@ export function BufferToUInt(b: Buffer) {
   let n = b.readBigUInt64BE(0);
   return Number(n);
 }
+
+export function BufferToUIntList(b: Buffer) {
+  let list: number[] = [];
+  for (let i = 0; i < b.length; i += 8) {
+    let n = b.readBigUInt64BE(i);
+    list.push(Number(n));
+  }
+  return list;
+}
+
+export function UIntListToBuffer(l: number[]) {
+  return Buffer.concat(l.map(n => UIntToBuffer(n)));
+}
