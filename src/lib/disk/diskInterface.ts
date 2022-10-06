@@ -3,9 +3,13 @@ import Error from '../error';
 import { BufferToUInt } from '../../utils/binNums';
 
 abstract class DiskInterface {
+  public static INDICATOR_SIZE: number = 8;
   public BLOCK_SIZE: number;
   public BLOCK_DATA_SIZE: number;
 
+  size(): number {
+    return 0;
+  }
   read(offset: number, length: number): Buffer {
     return Buffer.alloc(0);
   }
@@ -17,6 +21,10 @@ abstract class DiskInterface {
 export class DiskFile extends DiskInterface {
   private fd: number;
   public file: string;
+
+  size(): number {
+    return fs.statSync(this.file).size;
+  }
 
   read(offset: number, length: number): Buffer {
     let buf = Buffer.alloc(length);

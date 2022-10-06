@@ -34,9 +34,10 @@ class Block {
     if (pointerBuffer.compare(Block.NULL_POINTER) === 0) return null;
     return new Block(BufferToUInt(pointerBuffer), this.disk);
   }
-  set next(b: Block) {
+  set next(b: Block | null) {
     let pointerOffset = this.disk.BLOCK_SIZE * this.id + 16 + this.disk.BLOCK_DATA_SIZE;
-    this.disk.write(UIntToBuffer(b.id), pointerOffset);
+    if (!b) this.disk.write(Block.NULL_POINTER, pointerOffset);
+    else this.disk.write(UIntToBuffer(b.id), pointerOffset);
   }
 
   array() {
@@ -47,6 +48,14 @@ class Block {
       currentBlock = currentBlock.next;
     }
     return list;
+  }
+
+  static create(disk: DiskInterface) {
+    let buf = Buffer.alloc(disk.BLOCK_SIZE);
+    let size = disk.size();
+    disk.append(buf);
+    let id = (size - 8) / disk.BLOCK_SIZE;
+    return new Block(id, disk);
   }
 
   constructor(id: number, disk: DiskInterface) {
