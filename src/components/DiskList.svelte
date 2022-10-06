@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onDestroy } from 'svelte';
   import DiskComponent from './DiskComponent.svelte';
-  import { disksData, DisksData, reloadDisksData, setDisksData } from '../controllers/disksManager';
-  import { disks } from '../globalState';
+  import { disksData, DisksData, setDisksData } from '../controllers/disksManager';
+  import { disks, reloadDisksData } from '../globalState';
   import Center from './utils/Center.svelte';
   import IconBtn from './utils/IconBtn.svelte';
   import FileImportSolid from '../icons/file-import-solid.svelte';

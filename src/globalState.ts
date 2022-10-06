@@ -6,6 +6,9 @@ import DiskFileSystem from './lib/disk/diskFileSystem';
 export let page = writable('home');
 // Disk manager
 export let disks = writable(disksData());
+export const reloadDisksData = () => {
+  disks.set(disksData());
+};
 // File system
 export let loadedDisk = writable<DiskFileSystem | null>(null);
 export let loadedDiskWorkPath = writable<string[] | null>(null);

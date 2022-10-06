@@ -21,7 +21,3 @@ export const setDisksData = (data: DisksData) => {
   let dataStr = JSON.stringify(data);
   fs.writeFileSync(diskDataFile, dataStr);
 };
-
-export const reloadDisksData = () => {
-  disks.set(disksData());
-};
