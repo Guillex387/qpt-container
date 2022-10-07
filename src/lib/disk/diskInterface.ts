@@ -1,11 +1,16 @@
 import * as fs from 'fs';
 import Error from '../error';
-import { BufferToUInt } from '../../utils/binNums';
+import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
 
 abstract class DiskInterface {
   public static INDICATOR_SIZE: number = 8;
   public BLOCK_SIZE: number;
   public BLOCK_DATA_SIZE: number;
+  public HEADER_SIZE: number;
+
+  get metadata(): Object {
+    return {};
+  }
 
   size(): number {
     return 0;
@@ -21,6 +26,13 @@ abstract class DiskInterface {
 export class DiskFile extends DiskInterface {
   private fd: number;
   public file: string;
+
+  get metadata(): Object {
+    let headerLengthBuffer = this.read(0, DiskInterface.INDICATOR_SIZE);
+    let headerLength = BufferToUInt(headerLengthBuffer);
+    let headerString = this.read(8, headerLength).toString('utf-8');
+    return JSON.parse(headerString);
+  }
 
   size(): number {
     return fs.statSync(this.file).size;
@@ -58,6 +70,22 @@ export class DiskFile extends DiskInterface {
     fs.closeSync(this.fd);
   }
 
+  static create(file: string, metadata: Object) {
+    let metadataBuffer = Buffer.from(JSON.stringify(metadata), 'utf-8');
+    let defaultBuffer = [
+      UIntToBuffer(metadataBuffer.length),
+      metadataBuffer,
+      Buffer.alloc(metadata['fragment-size'] + 2 * DiskInterface.INDICATOR_SIZE),
+      Buffer.alloc(metadata['fragment-size'] + 2 * DiskInterface.INDICATOR_SIZE),
+    ];
+    try {
+      fs.writeFileSync(file, Buffer.concat(defaultBuffer));
+    } catch (error) {
+      throw new Error(2);
+    }
+    return new DiskFile(file);
+  }
+
   constructor(file: string) {
     super();
     try {
@@ -65,8 +93,9 @@ export class DiskFile extends DiskInterface {
     } catch (error) {
       throw new Error(2);
     }
-    this.BLOCK_DATA_SIZE = BufferToUInt(this.read(0, 8));
-    this.BLOCK_SIZE = this.BLOCK_DATA_SIZE + 16;
+    this.HEADER_SIZE = DiskInterface.INDICATOR_SIZE + BufferToUInt(this.read(0, DiskInterface.INDICATOR_SIZE));
+    this.BLOCK_DATA_SIZE = this.metadata['fragment-size'];
+    this.BLOCK_SIZE = this.BLOCK_DATA_SIZE + 2 * DiskInterface.INDICATOR_SIZE;
   }
 }
 
