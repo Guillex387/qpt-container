@@ -7,6 +7,7 @@ abstract class DiskInterface {
   public BLOCK_SIZE: number;
   public BLOCK_DATA_SIZE: number;
   public HEADER_SIZE: number;
+  public pass: string;
 
   get metadata(): Object {
     return {};
@@ -70,7 +71,7 @@ export class DiskFile extends DiskInterface {
     fs.closeSync(this.fd);
   }
 
-  static create(file: string, metadata: Object) {
+  static create(file: string, pass: string, metadata: Object) {
     let metadataBuffer = Buffer.from(JSON.stringify(metadata), 'utf-8');
     let defaultBuffer = [
       UIntToBuffer(metadataBuffer.length),
@@ -83,16 +84,17 @@ export class DiskFile extends DiskInterface {
     } catch (error) {
       throw new Error(2);
     }
-    return new DiskFile(file);
+    return new DiskFile(file, pass);
   }
 
-  constructor(file: string) {
+  constructor(file: string, pass: string) {
     super();
     try {
       this.fd = fs.openSync(file, 'r+');
     } catch (error) {
       throw new Error(2);
     }
+    this.pass = pass;
     this.HEADER_SIZE = DiskInterface.INDICATOR_SIZE + BufferToUInt(this.read(0, DiskInterface.INDICATOR_SIZE));
     this.BLOCK_DATA_SIZE = this.metadata['fragment-size'];
     this.BLOCK_SIZE = this.BLOCK_DATA_SIZE + 2 * DiskInterface.INDICATOR_SIZE;
