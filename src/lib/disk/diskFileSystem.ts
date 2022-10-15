@@ -1,60 +1,35 @@
 import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
 import AES from '../aes';
+import Error from '../error';
 import SHA from '../sha';
 import Block from './block';
 import BlockManager from './blockManager';
-import DiskInterface from './diskInterface';
+import DiskInterface, { INDICATOR_SIZE } from './diskInterface';
 
 export class File {
   public initBlock: Block;
   public disk: DiskInterface;
   public blockManager: BlockManager;
-  public root: RootFolder;
   public parent: Folder | null;
-  // public metadata: Object;
-
-  get rawContent(): { metadataBuffer: Buffer; dataBuffer: Buffer } {
-    let fileBuffer = this.blockManager.readData(this.initBlock);
-    let metadataBufferLength = BufferToUInt(fileBuffer.slice(0, DiskInterface.INDICATOR_SIZE));
-    let metadataBuffer = fileBuffer.slice(DiskInterface.INDICATOR_SIZE, metadataBufferLength);
-    let dataBuffer = fileBuffer.slice(DiskInterface.INDICATOR_SIZE + metadataBufferLength);
-    return { metadataBuffer, dataBuffer };
-  }
-  set rawContent(value: { metadataBuffer: Buffer; dataBuffer: Buffer }) {
-    this.blockManager.writeData(
-      Buffer.concat([UIntToBuffer(value.metadataBuffer.length), value.metadataBuffer, value.dataBuffer]),
-      this.initBlock
-    );
-  }
 
   get data(): Buffer {
-    return AES.decrypt(this.rawContent.dataBuffer, this.disk.pass);
+    // TODO
   }
   set data(b: Buffer) {
-    let bufferEncrypted = AES.encrypt(b, this.disk.pass);
-    this.rawContent = {
-      metadataBuffer: this.rawContent.metadataBuffer,
-      dataBuffer: bufferEncrypted,
-    };
+    // TODO
   }
 
   get metadata(): Object {
-    let metadataBuffer = AES.decrypt(this.rawContent.metadataBuffer, this.disk.pass);
-    return JSON.parse(metadataBuffer.toString('utf-8'));
+    // TODO
   }
   set metadata(value: Object) {
-    let metaDataBuffer = Buffer.from(JSON.stringify(value), 'utf-8');
-    this.rawContent = {
-      metadataBuffer: AES.encrypt(metaDataBuffer, this.disk.pass),
-      dataBuffer: this.rawContent.dataBuffer,
-    };
+    // TODO
   }
 
   constructor(disk: DiskInterface, parent: Folder | null, initBlock: Block) {
     this.disk = disk;
     this.parent = parent;
     this.blockManager = new BlockManager(this.disk);
-    this.root = new RootFolder(this.disk);
     this.initBlock = initBlock;
   }
 }
@@ -62,22 +37,39 @@ export class Folder extends File {
   get dataFolder(): Map<Buffer, Block> {
     let dataBuffer = this.data;
     let data: [Buffer, Block][] = [];
-    for (let i = 0; i < dataBuffer.length; i += SHA.HASH_SIZE + DiskInterface.INDICATOR_SIZE) {
+    for (let i = 0; i < dataBuffer.length; i += SHA.HASH_SIZE + INDICATOR_SIZE) {
       data.push([
         dataBuffer.slice(i, i + SHA.HASH_SIZE),
-        new Block(BufferToUInt(dataBuffer.slice(i + SHA.HASH_SIZE, i + SHA.HASH_SIZE + DiskInterface.INDICATOR_SIZE)), this.disk),
+        new Block(BufferToUInt(dataBuffer.slice(i + SHA.HASH_SIZE, i + SHA.HASH_SIZE + INDICATOR_SIZE)), this.disk),
       ]);
     }
     return new Map(data);
+  }
+  set dataFolder(map: Map<Buffer, Block>) {
+    let bufferPart: Buffer[] = [];
+    for (const entrie of map.entries()) {
+      bufferPart.push(Buffer.concat([entrie[0], UIntToBuffer(entrie[1].id)]));
+    }
+    this.data = Buffer.concat(bufferPart);
   }
 
   constructor(disk: DiskInterface, parent: Folder, initBlock: Block) {
     super(disk, parent, initBlock);
   }
 }
-
 export class RootFolder extends Folder {
-  // TODO getFile(path: string[]): File {}
+  getFile(path: string[]): File {
+    let hashPath = path.map(item => SHA.hash(Buffer.from(item, 'utf-8')));
+    let currentFolder: Folder = this;
+    for (let i = 0; i < hashPath.length; i++) {
+      const hash = hashPath[i];
+      let initBlock = currentFolder.dataFolder.get(hash);
+      if (initBlock === undefined) throw new Error(6);
+      let file = new File(this.disk, currentFolder, initBlock);
+      if (i + 1 === hashPath.length) return file;
+      else if (file.metadata['type'] === 'folder') currentFolder = file as Folder;
+    }
+  }
 
   constructor(disk: DiskInterface) {
     super(disk, null, new Block(1, disk));
@@ -89,8 +81,21 @@ export class RootFolder extends Folder {
 
 class FileSystem {
   public disk: DiskInterface;
+  public name: string;
 
-  // TODO
+  public readFile(path: string[]) {}
+
+  public readFolder(path: string[]) {}
+
+  public writeFile(path: string[], buffer: Buffer) {}
+
+  public createFile(path: string[], buffer: Buffer) {}
+
+  public createFolder(path: string[]) {}
+
+  public renameFile(path: string[], newName: string) {}
+
+  public removeFile(path: string[]) {}
 
   constructor(disk: DiskInterface) {
     this.disk = disk;
