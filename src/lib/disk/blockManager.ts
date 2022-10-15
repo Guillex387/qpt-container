@@ -21,9 +21,11 @@ class BlockManager {
     this.writeData(Buffer.concat([registryData, blocksBuffer]), this.registryBlock, true);
   }
 
-  readData(initBlock: Block) {
-    let dataParts: Buffer[] = initBlock.array().map(b => b.dataFrame);
-    return Buffer.concat(dataParts);
+  readData(initBlock: Block, blockOffset?: number, blockLength?: number) {
+    let blockArray = initBlock.array();
+    if (blockOffset) blockArray = blockArray.slice(blockOffset);
+    if (blockLength) blockArray = blockArray.slice(0, blockLength);
+    return Buffer.concat(blockArray.map(block => block.dataFrame));
   }
 
   writeData(data: Buffer, initBlock?: Block, registry: boolean = false) {
