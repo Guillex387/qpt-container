@@ -28,7 +28,7 @@ The icons of the app are provided by [Font Awesome](https://fontawesome.com), un
 
 ## Development
 
-The app are the developed with [electron](https://www.electronjs.org), [typescript](https://www.typescriptlang.org), [svelte](https://svelte.dev) and [tailwindCss](https://tailwindcss.com).
+The app are the developed with [electron](https://www.electronjs.org), [typescript](https://www.typescriptlang.org), [svelte](https://svelte.dev) and [tailwindCss](https://tailwindcss.com). And the functioning of the disk is documented [here](docs/qpt-container%20Disk%20docs%20cbb2f5768712442b9a2eae8517c85888.md).
 
 ## License
 
