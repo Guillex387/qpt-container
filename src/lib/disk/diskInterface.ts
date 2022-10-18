@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import Error from '../error';
+import { DiskCreateError, DiskReadError, DiskWriteError } from '../error';
 import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
 
 export const INDICATOR_SIZE = 8;
@@ -51,7 +51,7 @@ export class DiskFile implements DiskI {
         position: offset,
       });
     } catch (error) {
-      throw new Error(3);
+      throw new DiskReadError();
     }
     return buf;
   }
@@ -60,7 +60,7 @@ export class DiskFile implements DiskI {
     try {
       fs.writeSync(this.fd, buffer, 0, buffer.length, offset);
     } catch (error) {
-      throw new Error(4);
+      throw new DiskWriteError();
     }
   }
 
@@ -68,7 +68,7 @@ export class DiskFile implements DiskI {
     try {
       fs.appendFileSync(this.file, buffer);
     } catch (error) {
-      throw new Error(4);
+      throw new DiskWriteError();
     }
   }
 
@@ -87,7 +87,7 @@ export class DiskFile implements DiskI {
     try {
       fs.writeFileSync(file, Buffer.concat(defaultBuffer));
     } catch (error) {
-      throw new Error(2);
+      throw new DiskCreateError();
     }
     return new DiskFile(file, pass);
   }
@@ -96,7 +96,7 @@ export class DiskFile implements DiskI {
     try {
       this.fd = fs.openSync(file, 'r+');
     } catch (error) {
-      throw new Error(2);
+      throw new DiskCreateError();
     }
     this.pass = pass;
     this.HEADER_SIZE = INDICATOR_SIZE + BufferToUInt(this.read(0, INDICATOR_SIZE));

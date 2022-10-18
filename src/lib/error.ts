@@ -1,23 +1,58 @@
-const errorMsgs: string[] = [
-  'Incorrect key', // code 0
-  'Invalid key', // code 1
-  "The disk doesn't exists", // code 2
-  'Error reading the disk', // code 3
-  'Error writing the disk', // code 4
-  'Error creating the disk', // code 5
-  "Error, the element doesn't exists", // code 6
-  'Error, the element already exists', // code 7
-  'The name already exists', // code 8
-];
-
-class Error {
-  public code: number;
+export default abstract class Error {
+  public type: string;
   public message: string;
-  constructor(code: number) {
-    this.code = code;
-    if (code >= errorMsgs.length) this.message = 'Unknow error';
-    else this.message = errorMsgs[code];
+}
+export abstract class DiskError extends Error {
+  public type: string = 'Disk Error';
+}
+export abstract class EncryptionError extends Error {
+  public type: string = 'Encryption Error';
+}
+export class IncorrectKey extends EncryptionError {
+  constructor() {
+    super();
+    this.message = 'Incorrect key';
   }
 }
-
-export default Error;
+export class InvalidKey extends EncryptionError {
+  constructor() {
+    super();
+    this.message = 'Invalid key';
+  }
+}
+export class DiskDontExists extends DiskError {
+  constructor() {
+    super();
+    this.message = "The disk doesn't exists";
+  }
+}
+export class DiskReadError extends DiskError {
+  constructor() {
+    super();
+    this.message = 'Error reading the disk';
+  }
+}
+export class DiskWriteError extends DiskError {
+  constructor() {
+    super();
+    this.message = 'Error writing the disk';
+  }
+}
+export class DiskCreateError extends DiskError {
+  constructor() {
+    super();
+    this.message = 'Error creating the disk';
+  }
+}
+export class ItemDontExists extends DiskError {
+  constructor() {
+    super();
+    this.message = "The element doesn't exists";
+  }
+}
+export class ItemAlreadyExists extends DiskError {
+  constructor() {
+    super();
+    this.message = 'The element already exists';
+  }
+}

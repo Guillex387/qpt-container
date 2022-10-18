@@ -1,4 +1,3 @@
-import Error from '../lib/error';
 const { ipcRenderer } = require('electron');
 
 export interface FileFilter {
@@ -6,8 +5,8 @@ export interface FileFilter {
   extensions: string[];
 }
 
-export const showErrorBox = (err: Error) => {
-  ipcRenderer.send('error-box', err.code, err.message);
+export const showErrorBox = (err: any) => {
+  ipcRenderer.send('error-box', err.type ?? 'Unknow Error', err.message ?? '');
 };
 
 export const showOpenBox = (multiSelections: boolean = false, filters: FileFilter[] = []): string[] | undefined => {

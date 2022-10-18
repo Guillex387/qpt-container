@@ -62,8 +62,8 @@ app.whenReady()
     app.quit();
   });
 
-ipcMain.on('error-box', (e, code, message) => {
-  dialog.showErrorBox(`Error ${code}`, message);
+ipcMain.on('error-box', (e, type, message) => {
+  dialog.showErrorBox(type, message);
 });
 ipcMain.on('open-box', (e, options) => {
   e.returnValue = dialog.showOpenDialogSync(options);

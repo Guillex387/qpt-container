@@ -1,6 +1,6 @@
 import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
 import DiskInterface, { INDICATOR_SIZE } from './diskInterface';
-import Error from '../error';
+import { DiskWriteError } from '../error';
 
 class Block {
   public static NULL_POINTER = Buffer.alloc(INDICATOR_SIZE);
@@ -12,7 +12,7 @@ class Block {
     return this.disk.read(dataOffset, this.length);
   }
   set dataFrame(b: Buffer) {
-    if (b.length > this.disk.BLOCK_DATA_SIZE) throw new Error(4);
+    if (b.length > this.disk.BLOCK_DATA_SIZE) throw new DiskWriteError();
     let dataOffset = this.disk.BLOCK_SIZE * this.id + INDICATOR_SIZE + this.disk.HEADER_SIZE;
     this.length = b.length;
     this.disk.write(b, dataOffset);

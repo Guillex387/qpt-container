@@ -1,6 +1,6 @@
 import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
 import AES from '../aes';
-import Error from '../error';
+import { ItemDontExists } from '../error';
 import SHA from '../sha';
 import Block from './block';
 import BlockManager from './blockManager';
@@ -82,7 +82,7 @@ export class RootFolder extends Folder {
     for (let i = 0; i < hashPath.length; i++) {
       const hash = hashPath[i];
       let initBlock = currentFolder.dataFolder.get(hash);
-      if (initBlock === undefined) throw new Error(6);
+      if (initBlock === undefined) throw new ItemDontExists();
       let file = new File(this.disk, currentFolder, initBlock);
       if (i + 1 === hashPath.length) return file;
       else if (file.metadata['type'] === 'folder') currentFolder = file as Folder;
