@@ -17,6 +17,13 @@ interface DiskI {
   destructor(): void;
 }
 
+interface DiskMetadata {
+  'fragment-size': number;
+  name: string;
+  encrypted: true;
+  opt: Object;
+}
+
 export class DiskFile implements DiskI {
   private fd: number;
   public file: string;
@@ -69,7 +76,7 @@ export class DiskFile implements DiskI {
     fs.closeSync(this.fd);
   }
 
-  static create(file: string, name: string, pass: string, metadata: Object) {
+  static create(file: string, name: string, pass: string, metadata: DiskMetadata) {
     let metadataBuffer = Buffer.from(JSON.stringify(metadata), 'utf-8');
     let defaultBuffer = [
       UIntToBuffer(metadataBuffer.length),
@@ -82,19 +89,19 @@ export class DiskFile implements DiskI {
     } catch (error) {
       throw new Error(2);
     }
-    return new DiskFile(file, name, pass);
+    return new DiskFile(file, pass);
   }
 
-  constructor(file: string, name: string, pass: string) {
+  constructor(file: string, pass: string) {
     try {
       this.fd = fs.openSync(file, 'r+');
     } catch (error) {
       throw new Error(2);
     }
-    this.name = name;
     this.pass = pass;
     this.HEADER_SIZE = INDICATOR_SIZE + BufferToUInt(this.read(0, INDICATOR_SIZE));
     this.BLOCK_DATA_SIZE = this.metadata['fragment-size'];
+    this.name = this.metadata.name;
     this.BLOCK_SIZE = this.BLOCK_DATA_SIZE + 2 * INDICATOR_SIZE;
   }
 }

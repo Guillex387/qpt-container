@@ -6,6 +6,13 @@ import Block from './block';
 import BlockManager from './blockManager';
 import DiskInterface, { INDICATOR_SIZE } from './diskInterface';
 
+interface FileMetatada {
+  name: 'filename.extension';
+  size: number;
+  type: 'file' | 'folder';
+  opt: Object;
+}
+
 export class File {
   public initBlock: Block;
   public disk: DiskInterface;
@@ -19,10 +26,10 @@ export class File {
     // TODO
   }
 
-  get metadata(): Object {
+  get metadata(): FileMetatada {
     // TODO
   }
-  set metadata(value: Object) {
+  set metadata(value: FileMetatada) {
     // TODO
   }
 
