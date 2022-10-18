@@ -17,24 +17,31 @@ class BlockManager {
 
   private addFreeBlocks(blocks: Block[]) {
     let blocksBuffer = Buffer.concat(blocks.map(b => UIntToBuffer(b.id)));
-    let registryData = this.readData(this.registryBlock);
-    this.writeData(Buffer.concat([registryData, blocksBuffer]), this.registryBlock, true);
+    this.appendData(blocksBuffer, this.registryBlock, true);
   }
 
-  readData(initBlock: Block, blockOffset?: number, blockLength?: number) {
+  readData(initBlock: Block, offset?: number, length?: number) {
     let blockArray = initBlock.array();
-    if (blockOffset) blockArray = blockArray.slice(blockOffset);
-    if (blockLength) blockArray = blockArray.slice(0, blockLength);
-    return Buffer.concat(blockArray.map(block => block.dataFrame));
+    let realOffset = offset % this.disk.BLOCK_DATA_SIZE;
+    let blockOffset = Math.floor(offset / this.disk.BLOCK_DATA_SIZE);
+    let blockCount = Math.floor(length / this.disk.BLOCK_DATA_SIZE) + 1;
+    if (offset) blockArray = blockArray.slice(blockOffset);
+    if (length) blockArray = blockArray.slice(0, blockOffset + blockCount);
+    blockArray = blockArray.slice(blockOffset, blockOffset + blockCount);
+    let data = Buffer.concat(blockArray.map(block => block.dataFrame));
+    if (offset) data = data.slice(realOffset);
+    if (length) data = data.slice(0, realOffset + length);
+    return data;
   }
 
   writeData(data: Buffer, initBlock?: Block, registry: boolean = false) {
-    let blockArray: Block[] = initBlock ? initBlock.array() : [this.getFreeBlock()];
+    let getBlock = () => (registry ? Block.create(this.disk) : this.getFreeBlock());
+    let blockArray: Block[] = initBlock ? initBlock.array() : [getBlock()];
     let dataOffset: number = 0;
     let lastBlockWrited: Block | null = null;
     while (true) {
       let currentBlock = blockArray.shift();
-      if (!currentBlock) currentBlock = registry ? Block.create(this.disk) : this.getFreeBlock();
+      if (!currentBlock) currentBlock = getBlock();
       if (lastBlockWrited) lastBlockWrited.next = currentBlock;
       currentBlock.dataFrame = data.slice(dataOffset, dataOffset + this.disk.BLOCK_DATA_SIZE);
       dataOffset += this.disk.BLOCK_DATA_SIZE;
@@ -46,6 +53,12 @@ class BlockManager {
     }
     if (blockArray.length !== 0) this.addFreeBlocks(blockArray);
     return initBlock;
+  }
+
+  appendData(data: Buffer, initBlock: Block, registry: boolean = false) {
+    let lastBlock = initBlock.array().pop();
+    let appendInit = this.writeData(data, undefined, registry);
+    lastBlock.next = appendInit;
   }
 
   removeData(initBlock: Block) {

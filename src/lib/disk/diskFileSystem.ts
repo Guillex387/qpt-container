@@ -20,17 +20,28 @@ export class File {
   public parent: Folder | null;
 
   get data(): Buffer {
-    // TODO
+    let metadataSizeBuffer = this.blockManager.readData(this.initBlock, 0, INDICATOR_SIZE);
+    let metadataSize = BufferToUInt(metadataSizeBuffer);
+    let fileHeaderSize = INDICATOR_SIZE + metadataSize;
+    return this.blockManager.readData(this.initBlock, fileHeaderSize);
   }
-  set data(b: Buffer) {
-    // TODO
+  set data(value: Buffer) {
+    let metadataBuffer = Buffer.from(JSON.stringify(this.metadata), 'utf-8');
+    let metadataSizeBuffer = UIntToBuffer(metadataBuffer.length);
+    this.blockManager.writeData(Buffer.concat([metadataSizeBuffer, metadataBuffer, value]), this.initBlock);
   }
 
   get metadata(): FileMetatada {
-    // TODO
+    let metadataSizeBuffer = this.blockManager.readData(this.initBlock, 0, INDICATOR_SIZE);
+    let metadataSize = BufferToUInt(metadataSizeBuffer);
+    let metadataBuffer = this.blockManager.readData(this.initBlock, INDICATOR_SIZE, metadataSize);
+    return JSON.parse(metadataBuffer.toString('utf-8'));
   }
   set metadata(value: FileMetatada) {
-    // TODO
+    let metadataBuffer = Buffer.from(JSON.stringify(value), 'utf-8');
+    let metadataSizeBuffer = UIntToBuffer(metadataBuffer.length);
+    let data = this.data;
+    this.blockManager.writeData(Buffer.concat([metadataSizeBuffer, metadataBuffer, data]), this.initBlock);
   }
 
   constructor(disk: DiskInterface, parent: Folder | null, initBlock: Block) {
