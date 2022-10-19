@@ -57,8 +57,14 @@ class BlockManager {
 
   appendData(data: Buffer, initBlock: Block, registry: boolean = false) {
     let lastBlock = initBlock.array().pop();
-    let appendInit = this.writeData(data, undefined, registry);
-    lastBlock.next = appendInit;
+    let lengthForWrite = this.disk.BLOCK_DATA_SIZE - lastBlock.length;
+    let dataFragment1 = data.slice(0, lengthForWrite);
+    let dataFragment2 = data.slice(lengthForWrite);
+    if (dataFragment1.length) lastBlock.dataFrame = Buffer.concat([lastBlock.dataFrame, dataFragment1]);
+    if (dataFragment2.length) {
+      let extraInitBlock = this.writeData(dataFragment2, undefined, registry);
+      lastBlock.next = extraInitBlock;
+    }
   }
 
   removeData(initBlock: Block) {
