@@ -1,21 +1,34 @@
 import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
 import DiskInterface, { INDICATOR_SIZE } from './diskInterface';
 import { DiskWriteError } from '../error';
+import AES from '../aes';
 
 class Block {
   public static NULL_POINTER = Buffer.alloc(INDICATOR_SIZE);
   public id: number;
   public disk: DiskInterface;
 
+  private encrypt(data: Buffer): Buffer | null {
+    if (!this.disk.metadata.encrypted) return null;
+    return AES.encrypt(data, this.disk.pass);
+  }
+  private decrypt(data: Buffer): Buffer | null {
+    if (!this.disk.metadata.encrypted) return null;
+    return AES.encrypt(data, this.disk.pass);
+  }
+
   get dataFrame(): Buffer {
     let dataOffset = this.disk.BLOCK_SIZE * this.id + INDICATOR_SIZE + this.disk.HEADER_SIZE;
-    return this.disk.read(dataOffset, this.length);
+    let dataRaw = this.disk.read(dataOffset, this.length);
+    let dataEncoding = this.decrypt(dataRaw) ?? dataRaw;
+    return dataEncoding;
   }
-  set dataFrame(b: Buffer) {
-    if (b.length > this.disk.BLOCK_DATA_SIZE) throw new DiskWriteError();
+  set dataFrame(data: Buffer) {
+    let dataEncoding = this.encrypt(data) ?? data;
+    if (dataEncoding.length > this.disk.BLOCK_DATA_SIZE) throw new DiskWriteError();
     let dataOffset = this.disk.BLOCK_SIZE * this.id + INDICATOR_SIZE + this.disk.HEADER_SIZE;
-    this.length = b.length;
-    this.disk.write(b, dataOffset);
+    this.length = dataEncoding.length;
+    this.disk.write(dataEncoding, dataOffset);
   }
 
   get length() {
@@ -50,7 +63,7 @@ class Block {
     return list;
   }
 
-  static create(disk: DiskInterface) {
+  static create(disk: DiskInterface, registry: boolean = false) {
     let buf = Buffer.alloc(disk.BLOCK_SIZE);
     let size = disk.size();
     disk.append(buf);
@@ -58,7 +71,7 @@ class Block {
     return new Block(id, disk);
   }
 
-  constructor(id: number, disk: DiskInterface) {
+  constructor(id: number, disk: DiskInterface, registry: boolean = false) {
     this.id = id;
     this.disk = disk;
   }

@@ -5,7 +5,7 @@
   import IconBtn from './utils/IconBtn.svelte';
   import DropDown from './overlays/DropDown.svelte';
   import MenuItem from './MenuItem.svelte';
-  import DiskFileSystem, { FileNodeI, FolderNodeI } from '../lib/disk/diskFileSystem';
+  import DiskFileSystem, { File } from '../lib/disk/diskFileSystem';
   import { fileState, loadedDiskWorkPath, page, saveCb } from '../globalState';
   import PenSolid from '../icons/pen-solid.svelte';
   import TrashAltSolid from '../icons/trash-alt-solid.svelte';
@@ -22,7 +22,7 @@
   const showMenu = () => (visibleMenu = true);
   const hideMenu = () => (visibleMenu = false);
 
-  export let obj: FileNodeI | FolderNodeI;
+  export let obj: File;
   export let disk: DiskFileSystem;
   export let originPath: string[];
 
@@ -31,12 +31,12 @@
   const hideDialog = () => (visibleDialog = false);
 
   const openItem = async () => {
-    if (obj.type === 'folder') {
-      loadedDiskWorkPath.update(path => [...path, obj.name]);
+    if (obj.metadata.name === 'folder') {
+      loadedDiskWorkPath.update(path => [...path, obj.metadata.name]);
     } else {
       try {
-        let content = disk.readFile([...originPath, obj.name]);
-        fileState.set({ name: obj.name, content });
+        let content = disk.readFile([...originPath, obj.metadata.name]);
+        fileState.set({ name: obj.metadata.name, content });
         page.set('preview');
       } catch (error) {
         showErrorBox(error);
@@ -46,11 +46,11 @@
 
   const editItem = () => {
     try {
-      let content = disk.readFile([...originPath, obj.name]);
-      fileState.set({ name: obj.name, content });
+      let content = disk.readFile([...originPath, obj.metadata.name]);
+      fileState.set({ name: obj.metadata.name, content });
       saveCb.set(content => {
         try {
-          disk.writeFile([...originPath, obj.name], content);
+          disk.writeFile([...originPath, obj.metadata.name], content);
         } catch (error) {
           showErrorBox(error);
         }
@@ -63,7 +63,7 @@
 
   const renameItem = async (newName: string) => {
     try {
-      disk.renameElement([...originPath, obj.name], obj.type, newName);
+      disk.renameFile([...originPath, obj.metadata.name], newName);
     } catch (error) {
       showErrorBox(error);
     }
@@ -72,8 +72,8 @@
 
   const deleteItem = async () => {
     try {
-      if (obj.type === 'file') disk.removeFile([...originPath, obj.name]);
-      else disk.removeFolder([...originPath, obj.name]);
+      if (obj.metadata.name === 'file') disk.removeFile([...originPath, obj.metadata.name]);
+      else disk.removeFile([...originPath, obj.metadata.name]);
     } catch (error) {
       showErrorBox(error);
     }
@@ -82,12 +82,12 @@
 
   const exportItem = async () => {
     try {
-      let ext = path.extname(obj.name).substring(1);
+      let ext = path.extname(obj.metadata.name).substring(1);
       let selectedFile = showSaveBox([
         { name: 'Original extension', extensions: [ext] },
         { name: 'All files', extensions: ['*'] },
       ]);
-      let content = await disk.readFile([...originPath, obj.name]);
+      let content = await disk.readFile([...originPath, obj.metadata.name]);
       fs.writeFileSync(selectedFile, content);
     } catch (error) {
       showErrorBox(error);
@@ -99,7 +99,7 @@
   <div class="flex-none w-12 h-full">
     <Center>
       <IconBtn pointer={false}>
-        {#if obj.type === 'file'}
+        {#if obj.metadata.name === 'file'}
           <FileSolid />
         {:else}
           <FolderSolid />
@@ -107,10 +107,10 @@
       </IconBtn>
     </Center>
   </div>
-  <p on:dblclick={openItem} class="w-full text-left truncate text-white cursor-pointer select-none">{obj.name}</p>
+  <p on:dblclick={openItem} class="w-full text-left truncate text-white cursor-pointer select-none">{obj.metadata.name}</p>
   <div class="flex-none w-12 h-full icon-hover rounded-lg">
     <DropDown visible={visibleMenu} on:show={showMenu} on:hide={hideMenu}>
-      {#if obj.type === 'folder'}
+      {#if obj.metadata.name === 'folder'}
         <MenuItem
           on:click={() => {
             showDialog();

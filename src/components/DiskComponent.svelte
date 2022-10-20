@@ -9,33 +9,22 @@
   import InputForm from './forms/InputForm.svelte';
   import TrashAltSolid from '../icons/trash-alt-solid.svelte';
   import { showErrorBox } from '../controllers/dialogs';
-  import Error from '../lib/error';
   import { disksData, setDisksData } from '../controllers/disksManager';
   import { loadedDisk, loadedDiskWorkPath, page } from '../globalState';
   import DiskFileSystem from '../lib/disk/diskFileSystem';
+  import { DiskFile } from '../lib/disk/diskInterface';
 
   const openDisk = async (pass: string) => {
     hideDialog();
     try {
       let file = disksData()[name];
-      let disk = new DiskFileSystem(file, pass, name);
-      await disk.readFolder([]);
+      let diskFile = new DiskFile(file, pass);
+      let disk = new DiskFileSystem(diskFile);
       loadedDisk.set(disk);
       loadedDiskWorkPath.set([]);
       page.set('disk');
     } catch (error) {
       showErrorBox(error);
-    }
-  };
-  const renameDisk = (newName: string) => {
-    hideDialog();
-    let disks = disksData();
-    let oldInfo = disks[name];
-    if (disks[newName]) showErrorBox(new Error(8));
-    else {
-      delete disks[name];
-      disks[newName] = oldInfo;
-      setDisksData(disks);
     }
   };
   const deleteDisk = () => {
@@ -100,13 +89,7 @@
     </DropDown>
   </div>
   <OverDialog visible={visibleDialog} on:hide={hideDialog}>
-    <InputForm
-      placeholder={dialogAction === 'open' ? 'Disk pass' : 'New name'}
-      on:submit={e => {
-        if (dialogAction === 'open') openDisk(e.detail.value);
-        else renameDisk(e.detail.value);
-      }}
-    />
+    <InputForm placeholder={'Disk pass'} on:submit={e => openDisk(e.detail.value)} />
   </OverDialog>
 </div>
 

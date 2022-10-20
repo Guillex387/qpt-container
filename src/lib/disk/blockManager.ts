@@ -35,7 +35,7 @@ class BlockManager {
   }
 
   writeData(data: Buffer, initBlock?: Block, registry: boolean = false) {
-    let getBlock = () => (registry ? Block.create(this.disk) : this.getFreeBlock());
+    let getBlock = () => (registry ? Block.create(this.disk, registry) : this.getFreeBlock());
     let blockArray: Block[] = initBlock ? initBlock.array() : [getBlock()];
     let dataOffset: number = 0;
     let lastBlockWrited: Block | null = null;
@@ -73,7 +73,7 @@ class BlockManager {
 
   constructor(disk: DiskInterface) {
     this.disk = disk;
-    this.registryBlock = new Block(0, this.disk);
+    this.registryBlock = new Block(0, this.disk, true);
   }
 }
 

@@ -3,25 +3,24 @@ import { DiskCreateError, DiskReadError, DiskWriteError } from '../error';
 import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
 
 export const INDICATOR_SIZE = 8;
+interface DiskMetadata {
+  'fragment-size': number;
+  name: string;
+  encrypted: true;
+  opt: Object;
+}
 interface DiskI {
   BLOCK_SIZE: number;
   BLOCK_DATA_SIZE: number;
   HEADER_SIZE: number;
   name: string;
   pass: string;
-  metadata(): Object;
+  metadata: DiskMetadata;
   size(): number;
   read(offset: number, length: number): Buffer;
   write(buffer: Buffer, offset: number): void;
   append(buffer: Buffer): void;
   destructor(): void;
-}
-
-interface DiskMetadata {
-  'fragment-size': number;
-  name: string;
-  encrypted: true;
-  opt: Object;
 }
 
 export class DiskFile implements DiskI {
@@ -32,8 +31,9 @@ export class DiskFile implements DiskI {
   public HEADER_SIZE: number;
   public name: string;
   public pass: string;
+  public metadata: DiskMetadata;
 
-  metadata(): Object {
+  readMetadata(): DiskMetadata {
     let headerLengthBuffer = this.read(0, INDICATOR_SIZE);
     let headerLength = BufferToUInt(headerLengthBuffer);
     let headerString = this.read(8, headerLength).toString('utf-8');
@@ -76,7 +76,7 @@ export class DiskFile implements DiskI {
     fs.closeSync(this.fd);
   }
 
-  static create(file: string, name: string, pass: string, metadata: DiskMetadata) {
+  static create(file: string, pass: string, metadata: DiskMetadata) {
     let metadataBuffer = Buffer.from(JSON.stringify(metadata), 'utf-8');
     let defaultBuffer = [
       UIntToBuffer(metadataBuffer.length),
@@ -103,6 +103,7 @@ export class DiskFile implements DiskI {
     this.BLOCK_DATA_SIZE = this.metadata['fragment-size'];
     this.name = this.metadata.name;
     this.BLOCK_SIZE = this.BLOCK_DATA_SIZE + 2 * INDICATOR_SIZE;
+    this.metadata = this.readMetadata();
   }
 }
 

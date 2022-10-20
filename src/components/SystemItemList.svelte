@@ -2,7 +2,7 @@
   import { onDestroy } from 'svelte';
   import SystemItemComponent from './SystemItemComponent.svelte';
   import { loadedDisk, loadedDiskWorkPath, page } from '../globalState';
-  import DiskFileSystem, { FolderContent } from '../lib/disk/diskFileSystem';
+  import DiskFileSystem, { File } from '../lib/disk/diskFileSystem';
   import { showErrorBox, showOpenBox } from '../controllers/dialogs';
   import Center from './utils/Center.svelte';
   import IconBtn from './utils/IconBtn.svelte';
@@ -21,7 +21,7 @@
 
   const getFolderContent = async () => {
     try {
-      return await disk.readFolder(workPath);
+      return disk.readFolder(workPath);
     } catch (error) {
       showErrorBox(error);
       page.set('home');
@@ -29,7 +29,7 @@
     }
   };
 
-  let itemsListPromise: Promise<FolderContent> | null = null;
+  let itemsListPromise: Promise<File[]> | null = null;
 
   let unsubscribeDisk = loadedDisk.subscribe(value => {
     disk = value;
@@ -53,7 +53,7 @@
         for (const file of uploadFiles) {
           let name = path.basename(file);
           let content = fs.readFileSync(file);
-          await disk.createFile(workPath, name, content);
+          disk.createFile([...workPath, name], content);
         }
       }
     } catch (error) {
@@ -65,7 +65,7 @@
   const createFile = async (name: string) => {
     hideDialog();
     try {
-      await disk.createFile(workPath, name, Buffer.alloc(0));
+      disk.createFile([...workPath, name], Buffer.alloc(0));
     } catch (error) {
       showErrorBox(error);
     }
@@ -75,7 +75,7 @@
   const createFolder = async (name: string) => {
     hideDialog();
     try {
-      await disk.createFolder(workPath, name);
+      disk.createFolder([...workPath, name]);
     } catch (error) {
       showErrorBox(error);
     }

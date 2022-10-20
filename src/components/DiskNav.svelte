@@ -6,7 +6,7 @@
   let path: string[] = [];
   let diskName: string = '(Loading...)';
 
-  let unsubscribeDisk = loadedDisk.subscribe(value => (diskName = value.name));
+  let unsubscribeDisk = loadedDisk.subscribe(fileSystem => (diskName = fileSystem.disk.name));
   let unsubscribePath = loadedDiskWorkPath.subscribe(value => (path = value));
 
   const navigate = (node: string) => {
