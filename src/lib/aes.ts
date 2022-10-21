@@ -2,6 +2,8 @@ import { IncorrectKey, InvalidKey } from './error';
 import nodeCrypto from 'crypto';
 
 class AES {
+  public static extraBytes: number = 32;
+
   private static formatSymKey(symKey: string): Buffer {
     if (symKey.length > 32) {
       throw new InvalidKey();

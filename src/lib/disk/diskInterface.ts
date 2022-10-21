@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { DiskCreateError, DiskReadError, DiskWriteError } from '../error';
 import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
+import AES from '../aes';
 
 export const INDICATOR_SIZE = 8;
 interface DiskMetadata {
@@ -13,6 +14,7 @@ interface DiskI {
   BLOCK_SIZE: number;
   BLOCK_DATA_SIZE: number;
   HEADER_SIZE: number;
+  realDataSize: number;
   name: string;
   pass: string;
   metadata: DiskMetadata;
@@ -29,6 +31,7 @@ export class DiskFile implements DiskI {
   public BLOCK_SIZE: number;
   public BLOCK_DATA_SIZE: number;
   public HEADER_SIZE: number;
+  public realDataSize: number;
   public name: string;
   public pass: string;
   public metadata: DiskMetadata;
@@ -101,6 +104,7 @@ export class DiskFile implements DiskI {
     this.pass = pass;
     this.HEADER_SIZE = INDICATOR_SIZE + BufferToUInt(this.read(0, INDICATOR_SIZE));
     this.BLOCK_DATA_SIZE = this.metadata['fragment-size'];
+    this.realDataSize = this.metadata.encrypted ? this.BLOCK_DATA_SIZE - AES.extraBytes : this.BLOCK_DATA_SIZE;
     this.name = this.metadata.name;
     this.BLOCK_SIZE = this.BLOCK_DATA_SIZE + 2 * INDICATOR_SIZE;
     this.metadata = this.readMetadata();
