@@ -1,6 +1,6 @@
 import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
 import AES from '../aes';
-import { DiskDontExists, ItemAlreadyExists, ItemDontExists } from '../error';
+import { ItemDontExists, ItemAlreadyExists } from '../error';
 import SHA from '../sha';
 import Block from './block';
 import BlockManager from './blockManager';
@@ -103,15 +103,15 @@ class FileSystem {
 
   public readFile(path: string[]): Buffer {
     let file = this.root.getFile(path);
-    if (!file) throw new DiskDontExists();
-    if (file.metadata.type === 'folder') throw new DiskDontExists();
+    if (!file) throw new ItemDontExists();
+    if (file.metadata.type === 'folder') throw new ItemDontExists();
     return file.data;
   }
 
   public readFolder(path: string[]): File[] {
     let file = this.root.getFile(path) as Folder;
-    if (!file) throw new DiskDontExists();
-    if (file.metadata.type === 'file') throw new DiskDontExists();
+    if (!file) throw new ItemDontExists();
+    if (file.metadata.type === 'file') throw new ItemDontExists();
     let matrix = Array.from(file.dataFolder.entries());
     let childList = matrix.map(item => new File(this.disk, file, item[1]));
     return childList;
@@ -119,8 +119,8 @@ class FileSystem {
 
   public writeFile(path: string[], buffer: Buffer, additionalData: Object = {}) {
     let file = this.root.getFile(path);
-    if (!file) throw new DiskDontExists();
-    if (file.metadata.type === 'folder') throw new DiskDontExists();
+    if (!file) throw new ItemDontExists();
+    if (file.metadata.type === 'folder') throw new ItemDontExists();
     file.metadata = {
       ...file.metadata,
     };
@@ -131,7 +131,7 @@ class FileSystem {
     if (this.root.getFile(path)) throw new ItemAlreadyExists();
     let name = path.pop();
     let parent = this.root.getFile(path) as Folder;
-    if (!parent || parent.metadata.type === 'file') throw new DiskDontExists();
+    if (!parent || parent.metadata.type === 'file') throw new ItemDontExists();
     let initBlock = this.root.blockManager.writeData(Buffer.alloc(0));
     let file = new File(this.disk, parent, initBlock);
     file.metadata = {
@@ -150,7 +150,7 @@ class FileSystem {
     if (this.root.getFile(path)) throw new ItemAlreadyExists();
     let name = path.pop();
     let parent = this.root.getFile(path) as Folder;
-    if (!parent || parent.metadata.type === 'file') throw new DiskDontExists();
+    if (!parent || parent.metadata.type === 'file') throw new ItemDontExists();
     let initBlock = this.root.blockManager.writeData(Buffer.alloc(0));
     let file = new File(this.disk, parent, initBlock) as Folder;
     file.metadata = {
@@ -169,7 +169,7 @@ class FileSystem {
     let file = this.root.getFile(path);
     let oldName = path.pop();
     let parent = this.root.getFile(path) as Folder;
-    if (!file || !parent || parent.metadata.type === 'file') throw new DiskDontExists();
+    if (!file || !parent || parent.metadata.type === 'file') throw new ItemDontExists();
     file.metadata = {
       ...file.metadata,
       name: newName,
@@ -184,7 +184,7 @@ class FileSystem {
     let file = this.root.getFile(path);
     let name = path.pop();
     let parent = this.root.getFile(path) as Folder;
-    if (!file || !parent || parent.metadata.type === 'file') throw new DiskDontExists();
+    if (!file || !parent || parent.metadata.type === 'file') throw new ItemDontExists();
     this.root.blockManager.removeData(file.initBlock);
     let map = parent.dataFolder;
     map.delete(SHA.hash(name));

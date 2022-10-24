@@ -15,7 +15,7 @@ class Block {
   }
   protected decrypt(data: Buffer): Buffer | null {
     if (!this.disk.metadata.encrypted) return null;
-    return AES.encrypt(data, this.disk.pass);
+    return AES.decrypt(data, this.disk.pass);
   }
 
   get dataFrame(): Buffer {
@@ -56,7 +56,7 @@ class Block {
 
   array() {
     let list: Block[] = [];
-    let currentBlock: Block = this;
+    let currentBlock: Block | null = this;
     while (currentBlock !== null) {
       list.push(currentBlock);
       currentBlock = currentBlock.next;

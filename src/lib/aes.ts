@@ -1,5 +1,5 @@
 import { IncorrectKey, InvalidKey } from './error';
-import nodeCrypto from 'crypto';
+import * as nodeCrypto from 'crypto';
 
 class AES {
   public static extraBytes: number = 32;

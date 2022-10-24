@@ -7,7 +7,7 @@ export const INDICATOR_SIZE = 8;
 interface DiskMetadata {
   'fragment-size': number;
   name: string;
-  encrypted: true;
+  encrypted: boolean;
   opt: Object;
 }
 interface DiskI {
@@ -101,13 +101,14 @@ export class DiskFile implements DiskI {
     } catch (error) {
       throw new DiskCreateError();
     }
+    this.file = file;
+    this.metadata = this.readMetadata();
     this.pass = pass;
     this.HEADER_SIZE = INDICATOR_SIZE + BufferToUInt(this.read(0, INDICATOR_SIZE));
     this.BLOCK_DATA_SIZE = this.metadata['fragment-size'];
     this.realDataSize = this.metadata.encrypted ? this.BLOCK_DATA_SIZE - AES.extraBytes : this.BLOCK_DATA_SIZE;
     this.name = this.metadata.name;
     this.BLOCK_SIZE = this.BLOCK_DATA_SIZE + 2 * INDICATOR_SIZE;
-    this.metadata = this.readMetadata();
   }
 }
 

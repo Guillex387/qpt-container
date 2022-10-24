@@ -20,7 +20,7 @@ class BlockManager {
     this.appendData(blocksBuffer, this.initRegistryBlock);
   }
 
-  readData(initBlock: Block, offset?: number, length?: number) {
+  readData(initBlock: Block, offset?: number, length?: number): Buffer {
     let blockArray = initBlock.array();
     let realOffset = offset % initBlock.realFragmentSize;
     let blockOffset = Math.floor(offset / initBlock.realFragmentSize);
@@ -34,26 +34,27 @@ class BlockManager {
     return data;
   }
 
-  writeData(data: Buffer, initBlock?: Block) {
+  // TODO: revise this method
+  writeData(data: Buffer, initBlock?: Block): Block {
     let registry = initBlock instanceof RegistryBlock;
-    let getBlock = () => (registry ? Block.create(this.disk, registry) : this.getFreeBlock());
+    const getBlock = () => (registry ? Block.create(this.disk, registry) : this.getFreeBlock());
     let blockArray: Block[] = initBlock ? initBlock.array() : [getBlock()];
+    let actualInitBlock = blockArray[0];
     let dataOffset: number = 0;
     let lastBlockWrited: Block | null = null;
     while (true) {
       let currentBlock = blockArray.shift();
-      if (!currentBlock) currentBlock = getBlock();
+      if (currentBlock === undefined) currentBlock = getBlock();
       if (lastBlockWrited) lastBlockWrited.next = currentBlock;
-      currentBlock.dataFrame = data.slice(dataOffset, dataOffset + initBlock.realFragmentSize);
-      dataOffset += initBlock.realFragmentSize;
+      currentBlock.dataFrame = data.slice(dataOffset, dataOffset + currentBlock.realFragmentSize);
+      dataOffset += currentBlock.realFragmentSize;
       lastBlockWrited = currentBlock;
       if (dataOffset >= data.length) {
         currentBlock.next = null;
         break;
       }
     }
-    if (blockArray.length !== 0) this.addFreeBlocks(blockArray);
-    return initBlock;
+    return actualInitBlock;
   }
 
   appendData(data: Buffer, initBlock: Block) {
