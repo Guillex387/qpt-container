@@ -1,4 +1,4 @@
-import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
+import { BufferToUInt, UIntListToBuffer } from '../../utils/binNums';
 import Block, { RegistryBlock } from './block';
 import DiskInterface from './diskInterface';
 
@@ -16,7 +16,7 @@ class BlockManager {
   }
 
   private addFreeBlocks(blocks: Block[]) {
-    let blocksBuffer = Buffer.concat(blocks.map(b => UIntToBuffer(b.id)));
+    let blocksBuffer = UIntListToBuffer(blocks.map(b => b.id));
     this.appendData(blocksBuffer, this.initRegistryBlock);
   }
 
@@ -27,16 +27,13 @@ class BlockManager {
     let blockCount = Math.floor(length / initBlock.realFragmentSize) + 1;
     if (offset) blockArray = blockArray.slice(blockOffset);
     if (length) blockArray = blockArray.slice(0, blockOffset + blockCount);
-    blockArray = blockArray.slice(blockOffset, blockOffset + blockCount);
     let data = Buffer.concat(blockArray.map(block => block.dataFrame));
     if (offset) data = data.slice(realOffset);
     if (length) data = data.slice(0, realOffset + length);
     return data;
   }
 
-  // TODO: revise this method
-  writeData(data: Buffer, initBlock?: Block): Block {
-    let registry = initBlock instanceof RegistryBlock;
+  writeData(data: Buffer, initBlock?: Block, registry: boolean = false): Block {
     const getBlock = () => (registry ? Block.create(this.disk, registry) : this.getFreeBlock());
     let blockArray: Block[] = initBlock ? initBlock.array() : [getBlock()];
     let actualInitBlock = blockArray[0];
@@ -64,7 +61,7 @@ class BlockManager {
     let dataFragment2 = data.slice(lengthForWrite);
     if (dataFragment1.length) lastBlock.dataFrame = Buffer.concat([lastBlock.dataFrame, dataFragment1]);
     if (dataFragment2.length) {
-      let extraInitBlock = this.writeData(dataFragment2, undefined);
+      let extraInitBlock = this.writeData(dataFragment2, undefined, initBlock instanceof RegistryBlock);
       lastBlock.next = extraInitBlock;
     }
   }
