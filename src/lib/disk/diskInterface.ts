@@ -49,6 +49,7 @@ export class DiskFile implements DiskI {
 
   read(offset: number, length: number): Buffer {
     let buf = Buffer.alloc(length);
+    if (!length) return buf;
     try {
       fs.readSync(this.fd, buf, {
         position: offset,
@@ -104,9 +105,12 @@ export class DiskFile implements DiskI {
     this.file = file;
     this.metadata = this.readMetadata();
     this.pass = pass;
-    this.HEADER_SIZE = INDICATOR_SIZE + BufferToUInt(this.read(0, INDICATOR_SIZE));
+    this.HEADER_SIZE =
+      INDICATOR_SIZE + BufferToUInt(this.read(0, INDICATOR_SIZE));
     this.BLOCK_DATA_SIZE = this.metadata['fragment-size'];
-    this.realDataSize = this.metadata.encrypted ? this.BLOCK_DATA_SIZE - AES.extraBytes : this.BLOCK_DATA_SIZE;
+    this.realDataSize = this.metadata.encrypted
+      ? this.BLOCK_DATA_SIZE - AES.extraBytes
+      : this.BLOCK_DATA_SIZE;
     this.name = this.metadata.name;
     this.BLOCK_SIZE = this.BLOCK_DATA_SIZE + 2 * INDICATOR_SIZE;
   }

@@ -13,7 +13,7 @@
   import { showErrorBox, showOpenBox, showSaveBox } from '../controllers/dialogs';
   import { createDisk } from '../controllers/diskController';
   import InputForm from './forms/InputForm.svelte';
-  import Error from '../lib/error';
+  import Error, { DiskDontExists } from '../lib/error';
   import Loader from './utils/Loader.svelte';
 
   let disksState: DisksData | null = null;
@@ -52,7 +52,7 @@
     let disks = disksData();
     if (disks[name]) {
       hideDialog();
-      showErrorBox(new Error(8));
+      showErrorBox(new DiskDontExists());
       return;
     }
     disks[name] = selectedDisk;

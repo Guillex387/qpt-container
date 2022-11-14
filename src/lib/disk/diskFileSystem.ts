@@ -1,5 +1,4 @@
 import { BufferToUInt, UIntToBuffer } from '../../utils/binNums';
-import AES from '../aes';
 import { ItemDontExists, ItemAlreadyExists } from '../error';
 import SHA from '../sha';
 import Block from './block';
@@ -13,34 +12,28 @@ interface FileMetatada {
 }
 
 export class File {
+  public static FILE_HEADER_SIZE = INDICATOR_SIZE;
   public initBlock: Block;
+  public metadataBlock: Block;
   public disk: DiskInterface;
   public blockManager: BlockManager;
   public parent: Folder | null;
 
   get data(): Buffer {
-    let metadataSizeBuffer = this.blockManager.readData(this.initBlock, 0, INDICATOR_SIZE);
-    let metadataSize = BufferToUInt(metadataSizeBuffer);
-    let fileHeaderSize = INDICATOR_SIZE + metadataSize;
-    return this.blockManager.readData(this.initBlock, fileHeaderSize);
+    return this.blockManager.readData(this.initBlock, File.FILE_HEADER_SIZE);
   }
   set data(value: Buffer) {
-    let metadataBuffer = Buffer.from(JSON.stringify(this.metadata), 'utf-8');
-    let metadataSizeBuffer = UIntToBuffer(metadataBuffer.length);
-    this.blockManager.writeData(Buffer.concat([metadataSizeBuffer, metadataBuffer, value]), this.initBlock);
+    let fileHeader = this.blockManager.readData(this.initBlock, 0, File.FILE_HEADER_SIZE);
+    this.blockManager.writeData(Buffer.concat([fileHeader, value]), this.initBlock);
   }
 
   get metadata(): FileMetatada {
-    let metadataSizeBuffer = this.blockManager.readData(this.initBlock, 0, INDICATOR_SIZE);
-    let metadataSize = BufferToUInt(metadataSizeBuffer);
-    let metadataBuffer = this.blockManager.readData(this.initBlock, INDICATOR_SIZE, metadataSize);
+    let metadataBuffer = this.blockManager.readData(this.metadataBlock);
     return JSON.parse(metadataBuffer.toString('utf-8'));
   }
   set metadata(value: FileMetatada) {
     let metadataBuffer = Buffer.from(JSON.stringify(value), 'utf-8');
-    let metadataSizeBuffer = UIntToBuffer(metadataBuffer.length);
-    let data = this.data;
-    this.blockManager.writeData(Buffer.concat([metadataSizeBuffer, metadataBuffer, data]), this.initBlock);
+    this.blockManager.writeData(metadataBuffer, this.metadataBlock);
   }
 
   constructor(disk: DiskInterface, parent: Folder | null, initBlock: Block) {
@@ -48,24 +41,40 @@ export class File {
     this.parent = parent;
     this.blockManager = new BlockManager(this.disk);
     this.initBlock = initBlock;
+    let metadataBlockIdBuffer = this.blockManager.readData(initBlock, 0, INDICATOR_SIZE);
+    const defaultMetadata: FileMetatada = {
+      type: 'file',
+      name: 'undefined',
+      opt: {},
+    };
+    if (!metadataBlockIdBuffer.length) {
+      this.metadataBlock = this.blockManager.writeData(Buffer.alloc(0));
+      this.blockManager.writeData(UIntToBuffer(this.metadataBlock.id), initBlock);
+      this.metadata = defaultMetadata;
+    } else {
+      this.metadataBlock = new Block(BufferToUInt(metadataBlockIdBuffer), this.disk);
+    }
   }
 }
 export class Folder extends File {
-  get dataFolder(): Map<Buffer, Block> {
+  get dataFolder(): Map<string, Block> {
     let dataBuffer = this.data;
-    let data: [Buffer, Block][] = [];
+    let data: [string, Block][] = [];
     for (let i = 0; i < dataBuffer.length; i += SHA.HASH_SIZE + INDICATOR_SIZE) {
       data.push([
-        dataBuffer.slice(i, i + SHA.HASH_SIZE),
-        new Block(BufferToUInt(dataBuffer.slice(i + SHA.HASH_SIZE, i + SHA.HASH_SIZE + INDICATOR_SIZE)), this.disk),
+        dataBuffer.slice(i, i + SHA.HASH_SIZE).toString('hex'),
+        new Block(
+          BufferToUInt(dataBuffer.slice(i + SHA.HASH_SIZE, i + SHA.HASH_SIZE + INDICATOR_SIZE)),
+          this.disk
+        ),
       ]);
     }
     return new Map(data);
   }
-  set dataFolder(map: Map<Buffer, Block>) {
+  set dataFolder(map: Map<string, Block>) {
     let bufferPart: Buffer[] = [];
     for (const entrie of map.entries()) {
-      bufferPart.push(Buffer.concat([entrie[0], UIntToBuffer(entrie[1].id)]));
+      bufferPart.push(Buffer.concat([Buffer.from(entrie[0], 'hex'), UIntToBuffer(entrie[1].id)]));
     }
     this.data = Buffer.concat(bufferPart);
   }
@@ -76,6 +85,7 @@ export class Folder extends File {
 }
 export class RootFolder extends Folder {
   getFile(path: string[]): File | null {
+    if (!path.length) return this;
     let hashPath = path.map(item => SHA.hash(item));
     let currentFolder: Folder = this;
     for (let i = 0; i < hashPath.length; i++) {
@@ -83,6 +93,8 @@ export class RootFolder extends Folder {
       let initBlock = currentFolder.dataFolder.get(hash);
       if (initBlock === undefined) return null;
       let file = new File(this.disk, currentFolder, initBlock);
+      if (file.metadata['type'] === 'folder')
+        file = new Folder(this.disk, currentFolder, initBlock);
       if (i + 1 === hashPath.length) return file;
       else if (file.metadata['type'] === 'folder') currentFolder = file as Folder;
     }
@@ -90,9 +102,11 @@ export class RootFolder extends Folder {
 
   constructor(disk: DiskInterface) {
     super(disk, null, new Block(1, disk));
-    let bufferContent = this.blockManager.readData(this.initBlock);
-    let defaultBufferData = AES.encrypt(Buffer.from('{}', 'utf-8'), this.disk.pass);
-    if (bufferContent.length === 0) this.blockManager.writeData(defaultBufferData);
+    this.metadata = {
+      ...this.metadata,
+      type: 'folder',
+      name: 'root',
+    };
   }
 }
 

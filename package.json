@@ -1,6 +1,6 @@
 {
   "name": "qpt-container",
-  "version": "2.0.0",
+  "version": "pre-2.0.0",
   "description": "This is a desktop app for encrypting and storing your data in a safe way",
   "main": "./core/main.js",
   "scripts": {

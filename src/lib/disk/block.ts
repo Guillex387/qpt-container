@@ -20,6 +20,7 @@ class Block {
 
   get dataFrame(): Buffer {
     let dataOffset = this.disk.BLOCK_SIZE * this.id + INDICATOR_SIZE + this.disk.HEADER_SIZE;
+    if (!this.length) return Buffer.alloc(0);
     let dataRaw = this.disk.read(dataOffset, this.length);
     let dataEncoding = this.decrypt(dataRaw) ?? dataRaw;
     return dataEncoding;

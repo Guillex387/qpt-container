@@ -31,7 +31,7 @@
   const hideDialog = () => (visibleDialog = false);
 
   const openItem = async () => {
-    if (obj.metadata.name === 'folder') {
+    if (obj.metadata.type === 'folder') {
       loadedDiskWorkPath.update(path => [...path, obj.metadata.name]);
     } else {
       try {
@@ -99,7 +99,7 @@
   <div class="flex-none w-12 h-full">
     <Center>
       <IconBtn pointer={false}>
-        {#if obj.metadata.name === 'file'}
+        {#if obj.metadata.type === 'file'}
           <FileSolid />
         {:else}
           <FolderSolid />
@@ -110,7 +110,7 @@
   <p on:dblclick={openItem} class="w-full text-left truncate text-white cursor-pointer select-none">{obj.metadata.name}</p>
   <div class="flex-none w-12 h-full icon-hover rounded-lg">
     <DropDown visible={visibleMenu} on:show={showMenu} on:hide={hideMenu}>
-      {#if obj.metadata.name === 'folder'}
+      {#if obj.metadata.type === 'folder'}
         <MenuItem
           on:click={() => {
             showDialog();

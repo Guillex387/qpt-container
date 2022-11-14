@@ -25,7 +25,7 @@ export const createDisk = (name: string, pass: string, file: string) => {
     let diskFile = DiskFile.create(file, pass, {
       name,
       'fragment-size': 4000,
-      encrypted: true,
+      encrypted: !!pass,
       opt: {},
     });
     let diskFileSystem = new DiskFileSystem(diskFile);

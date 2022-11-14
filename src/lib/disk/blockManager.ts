@@ -16,7 +16,12 @@ class BlockManager {
   }
 
   private addFreeBlocks(blocks: Block[]) {
-    let blocksBuffer = UIntListToBuffer(blocks.map(b => b.id));
+    let blocksBuffer = UIntListToBuffer(
+      blocks.map(b => {
+        b.length = 0;
+        return b.id;
+      })
+    );
     this.appendData(blocksBuffer, this.initRegistryBlock);
   }
 
@@ -59,9 +64,14 @@ class BlockManager {
     let lengthForWrite = initBlock.realFragmentSize - lastBlock.realLength();
     let dataFragment1 = data.slice(0, lengthForWrite);
     let dataFragment2 = data.slice(lengthForWrite);
-    if (dataFragment1.length) lastBlock.dataFrame = Buffer.concat([lastBlock.dataFrame, dataFragment1]);
+    if (dataFragment1.length)
+      lastBlock.dataFrame = Buffer.concat([lastBlock.dataFrame, dataFragment1]);
     if (dataFragment2.length) {
-      let extraInitBlock = this.writeData(dataFragment2, undefined, initBlock instanceof RegistryBlock);
+      let extraInitBlock = this.writeData(
+        dataFragment2,
+        undefined,
+        initBlock instanceof RegistryBlock
+      );
       lastBlock.next = extraInitBlock;
     }
   }
