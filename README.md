@@ -2,8 +2,6 @@
   <img src="https://raw.githubusercontent.com/Guillex387/qpt-container/master/assets/logo_with_name.png">
 </p>
 
-# !!! Important: this branch of the project is currently in development, and It is not ready for using it !!!
-
 ## Description and use
 
 This is a desktop app for encrypting and storage your data in a safe way.
@@ -20,7 +18,7 @@ The app is very friendly and easy to use, you can create the disks that you need
 
 ## Executables
 
-You can download the program for [windows](https://github.com/Guillex387/qpt-container/releases/download/v1.1.0/setup-v1.1.0.exe) and [linux](https://github.com/Guillex387/qpt-container/releases/download/v1.1.0/qpt-container-linux-x64-v1.1.0.zip) **1.1.0 version**.
+You can find the programs builds [here](https://github.com/Guillex387/qpt-container/releases/latest).
 
 ## Resources
 

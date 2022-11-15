@@ -46,8 +46,10 @@ The file is the basic unit of the file system, and it is a binary stored in 1 or
 
 Each file has two parts:
 
-- Header, which is composed of an 8 bytes number which indicates the size of the specific metadata.
+- Metadata, that is some information of the file, name, size, ...
 - Data, which is the content of the file.
+
+This parts are in different blocks, in the main block is stored a 8 bytes indicatior with the ID of the metadata block and in the rest the data of the file.
 
 ## Folder
 
