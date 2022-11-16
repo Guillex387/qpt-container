@@ -1,14 +1,13 @@
 {
   "name": "qpt-container",
-  "version": "pre-2.0.0",
+  "version": "2.0.0",
   "description": "This is a desktop app for encrypting and storing your data in a safe way",
   "main": "./core/main.js",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "electron ./core/main.js",
-    "pack": "rollup -c && node packager.js",
-    "tests": "jest"
+    "pack": "rollup -c && node packager.js"
   },
   "dependencies": {
     "dompurify": "^2.3.5",
