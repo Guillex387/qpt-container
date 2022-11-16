@@ -1,33 +1,63 @@
-import typescript from '@rollup/plugin-typescript'
-import { terser } from 'rollup-plugin-terser'
+import svelte from 'rollup-plugin-svelte';
+import { terser } from 'rollup-plugin-terser';
+import sveltePreprocess from 'svelte-preprocess';
+import typescript from '@rollup/plugin-typescript';
+import css from 'rollup-plugin-css-only';
 import injectEnv from 'rollup-plugin-inject-process-env';
-import fs from 'fs'
-import path from 'path'
-const production = !process.env.ROLLUP_WATCH
-const portable = process.env.PORTABLE || 'true';
-function resetDir() {
-    const mapFile = path.join(__dirname, 'app', 'bundle.js.map')
-    try {
-        fs.unlinkSync(mapFile)
-    } catch (error) { }
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import fs from 'fs';
+import path from 'path';
+
+const production = !process.env.ROLLUP_WATCH;
+const deleteSourceMaps = () => {
+	let target = path.join(__dirname, 'core', 'build', 'bundle.js.map');
+	try {
+		fs.unlinkSync(target);
+	} catch (e) { }
 }
 
-production && resetDir()
+production && deleteSourceMaps();
+
+let packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json')));
+
 export default {
-    input: 'src/index.ts',
-    external: ['os', 'fs', 'path', 'electron', 'events', 'zlib', 'crypto', 'mime-types'],
-    plugins: [
-        typescript({ target: 'es6' }),
-        production && injectEnv({
-            ELECTRON_ENV: 'production',
-            PORTABLE_VERSION: portable
-        }),
-        production && terser({ compress: true, mangle: true, toplevel: true })
-    ],
-    output: {
-        file: 'app/bundle.js',
-        format: 'cjs',
-        sourcemapFile: 'app/bundle.js.map',
-        sourcemap: !production
-    }
+	input: 'src/main.ts',
+	output: {
+		sourcemap: !production,
+		format: 'cjs',
+		name: 'app',
+		file: 'core/build/bundle.js'
+	},
+	external: ['mime-types', 'dompurify', 'fs', 'path', 'crypto', 'os'],
+	plugins: [
+		svelte({
+			preprocess: sveltePreprocess({
+				sourceMap: !production,
+				postcss: true
+			}),
+			compilerOptions: {
+				dev: !production
+			}
+		}),
+		css({ output: 'bundle.css' }),
+		typescript({
+			sourceMap: !production,
+			inlineSources: !production
+		}),
+		resolve({
+			browser: false,
+			dedupe: ['svelte', 'three']
+		}),
+		commonjs(),
+		injectEnv({
+			PRODUCTION: production.toString(),
+			PACKAGE_NAME: packageJson.name,
+			PACKAGE_VERSION: packageJson.version
+		}),
+		production && terser()
+	],
+	watch: {
+		clearScreen: false
+	}
 }
