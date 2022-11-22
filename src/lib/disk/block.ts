@@ -8,13 +8,14 @@ class Block {
   public id: number;
   public disk: DiskInterface;
   public realFragmentSize: number;
+  protected registry: boolean;
 
   protected encrypt(data: Buffer): Buffer | null {
-    if (!this.disk.metadata.encrypted) return null;
+    if (!this.disk.metadata.encrypted || this.registry) return null;
     return AES.encrypt(data, this.disk.pass);
   }
   protected decrypt(data: Buffer): Buffer | null {
-    if (!this.disk.metadata.encrypted) return null;
+    if (!this.disk.metadata.encrypted || this.registry) return null;
     return AES.decrypt(data, this.disk.pass);
   }
 
@@ -44,13 +45,22 @@ class Block {
   }
 
   get next(): Block | null {
-    let pointerOffset = this.disk.BLOCK_SIZE * this.id + this.disk.HEADER_SIZE + INDICATOR_SIZE + this.disk.BLOCK_DATA_SIZE;
+    let pointerOffset =
+      this.disk.BLOCK_SIZE * this.id +
+      this.disk.HEADER_SIZE +
+      INDICATOR_SIZE +
+      this.disk.BLOCK_DATA_SIZE;
     let pointerBuffer = this.disk.read(pointerOffset, INDICATOR_SIZE);
     if (pointerBuffer.compare(Block.NULL_POINTER) === 0) return null;
+    if (this.registry) return new RegistryBlock(BufferToUInt(pointerBuffer), this.disk);
     return new Block(BufferToUInt(pointerBuffer), this.disk);
   }
   set next(b: Block | null) {
-    let pointerOffset = this.disk.BLOCK_SIZE * this.id + this.disk.HEADER_SIZE + INDICATOR_SIZE + this.disk.BLOCK_DATA_SIZE;
+    let pointerOffset =
+      this.disk.BLOCK_SIZE * this.id +
+      this.disk.HEADER_SIZE +
+      INDICATOR_SIZE +
+      this.disk.BLOCK_DATA_SIZE;
     if (!b) this.disk.write(Block.NULL_POINTER, pointerOffset);
     else this.disk.write(UIntToBuffer(b.id), pointerOffset);
   }
@@ -66,7 +76,7 @@ class Block {
   }
 
   realLength(): number {
-    if (!this.disk.metadata.encrypted) return this.length;
+    if (!this.disk.metadata.encrypted || this.registry) return this.length;
     return this.length - AES.extraBytes;
   }
 
@@ -82,24 +92,15 @@ class Block {
     this.id = id;
     this.disk = disk;
     this.realFragmentSize = this.disk.realDataSize;
+    this.registry = false;
   }
 }
 
 export class RegistryBlock extends Block {
-  protected encrypt(data: Buffer) {
-    return null;
-  }
-  protected decrypt(data: Buffer) {
-    return null;
-  }
-
-  realLength(): number {
-    return this.length;
-  }
-
   constructor(id: number, disk: DiskInterface) {
     super(id, disk);
     this.realFragmentSize = this.disk.BLOCK_DATA_SIZE;
+    this.registry = true;
   }
 }
 
