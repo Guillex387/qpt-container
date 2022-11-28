@@ -30,6 +30,7 @@ const defaultPlatforms = ['win32', 'linux'];
 let args = process.argv.slice(2);
 let target = args.length === 1 ? args[0].split('-') : null;
 let [targetPlatform, targetArch] = target || [null, null];
+let version_number = packageJson.version.split('@')[0];
 
 console.log('Packing the app...');
 
@@ -38,7 +39,7 @@ packager({
   appCopyright: 'qpt-container Copyright (c) 2022 Guillex387. All rights reserved.',
   arch: targetArch || defaultArchs,
   asar: true,
-  buildVersion: packageJson.version,
+  buildVersion: version_number,
   dir: tempEnvDir,
   icon: path.join(__dirname, 'assets', 'logo-win.ico'),
   name: packageJson.name,
